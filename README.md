@@ -8,7 +8,7 @@ This work was supported by the National Science Foundation through grant [SES-13
 
 To install/update in Stata type:
 ```
-net install rdpower, from(https://sites.google.com/site/rdpackages/rdpower/stata) replace
+net install rdpower, from(https://raw.githubusercontent.com/rdpackages/rdpower/master/stata) replace
 ```
 
 - Help: [rdpower](stata/rdpower.pdf), [rdsampsi](stata/rdsampsi.pdf).
