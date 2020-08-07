@@ -27,10 +27,19 @@ install.packages('rdpower')
 
 ## References
 
-- Calonico, Cattaneo and Titiunik (2014): [Robust Nonparametric Confidence Intervals for Regression-Discontinuity Designs](references/Calonico-Cattaneo-Titiunik_2014_ECMA.pdf), _Econometrica_ 82(6): 2295-2326. [Supplemental Appendix](references/Calonico-Cattaneo-Titiunik_2014_ECMA--Supplemental.pdf).
+For overviews and introductions, see [rdpackages website]().
+
+### Software and Implementation
 
 - Cattaneo, Titiunik and Vazquez-Bare (2019): [Power Calculations for Regression Discontinuity Designs](references/Cattaneo-Titiunik-VazquezBare_2019_Stata.pdf), _Stata Journal_ 19(1): 210-245.
+
+### Technical and Methodological
+
+- Calonico, Cattaneo and Titiunik (2014): [Robust Nonparametric Confidence Intervals for Regression-Discontinuity Designs](references/Calonico-Cattaneo-Titiunik_2014_ECMA.pdf), _Econometrica_ 82(6): 2295-2326. [Supplemental Appendix](references/Calonico-Cattaneo-Titiunik_2014_ECMA--Supplemental.pdf).
 
 - Calonico, Cattaneo, Farrell and Titiunik (2019): [Regression Discontinuity Designs Using Covariates](references/Calonico-Cattaneo-Farrell-Titiunik_2019_RESTAT.pdf), _Review of Economics and Statistics_ 101(3): 442-451. [Supplemental Appendix](references/Calonico-Cattaneo-Farrell-Titiunik_2019_RESTAT--Supplement.pdf).
 
 - Calonico, Cattaneo and Farrell (2020): [Optimal Bandwidth Choice for Robust Bias Corrected Inference in Regression Discontinuity Designs](references/Calonico-Cattaneo-Farrell_2020_ECTJ.pdf), _Econometrics Journal_ 23(2): 192-210. [Supplemental Appendix](references/Calonico-Cattaneo-Farrell_2020_ECTJ--Supplement.pdf).
+
+<br>
+<br>
