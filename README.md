@@ -35,14 +35,18 @@ For overviews and introductions, see [rdpackages website](https://rdpackages.git
 
 ### Software and Implementation
 
-- Cattaneo, Titiunik and Vazquez-Bare (2019): [Power Calculations for Regression Discontinuity Designs](https://rdpackages.github.io/references/Cattaneo-Titiunik-VazquezBare_2019_Stata.pdf), _Stata Journal_ 19(1): 210-245.
+- Cattaneo, Titiunik and Vazquez-Bare (2019): [Power Calculations for Regression Discontinuity Designs](https://rdpackages.github.io/references/Cattaneo-Titiunik-VazquezBare_2019_Stata.pdf).<br>
+_Stata Journal_ 19(1): 210-245.
 
 ### Technical and Methodological
 
-- Calonico, Cattaneo and Titiunik (2014): [Robust Nonparametric Confidence Intervals for Regression-Discontinuity Designs](https://rdpackages.github.io/references/Calonico-Cattaneo-Titiunik_2014_ECMA.pdf), _Econometrica_ 82(6): 2295-2326. [Supplemental Appendix](https://rdpackages.github.io/references/Calonico-Cattaneo-Titiunik_2014_ECMA--Supplemental.pdf).
+- Calonico, Cattaneo and Titiunik (2014): [Robust Nonparametric Confidence Intervals for Regression-Discontinuity Designs](https://rdpackages.github.io/references/Calonico-Cattaneo-Titiunik_2014_ECMA.pdf).<br>
+_Econometrica_ 82(6): 2295-2326. [Supplemental Appendix](https://rdpackages.github.io/references/Calonico-Cattaneo-Titiunik_2014_ECMA--Supplemental.pdf).
 
-- Calonico, Cattaneo, Farrell and Titiunik (2019): [Regression Discontinuity Designs Using Covariates](https://rdpackages.github.io/references/Calonico-Cattaneo-Farrell-Titiunik_2019_RESTAT.pdf), _Review of Economics and Statistics_ 101(3): 442-451. [Supplemental Appendix](https://rdpackages.github.io/references/Calonico-Cattaneo-Farrell-Titiunik_2019_RESTAT--Supplement.pdf).
+- Calonico, Cattaneo, Farrell and Titiunik (2019): [Regression Discontinuity Designs Using Covariates](https://rdpackages.github.io/references/Calonico-Cattaneo-Farrell-Titiunik_2019_RESTAT.pdf).<br>
+_Review of Economics and Statistics_ 101(3): 442-451. [Supplemental Appendix](https://rdpackages.github.io/references/Calonico-Cattaneo-Farrell-Titiunik_2019_RESTAT--Supplement.pdf).
 
-- Calonico, Cattaneo and Farrell (2020): [Optimal Bandwidth Choice for Robust Bias Corrected Inference in Regression Discontinuity Designs](https://rdpackages.github.io/references/Calonico-Cattaneo-Farrell_2020_ECTJ.pdf), _Econometrics Journal_ 23(2): 192-210. [Supplemental Appendix](https://rdpackages.github.io/references/Calonico-Cattaneo-Farrell_2020_ECTJ--Supplement.pdf).
+- Calonico, Cattaneo and Farrell (2020): [Optimal Bandwidth Choice for Robust Bias Corrected Inference in Regression Discontinuity Designs](https://rdpackages.github.io/references/Calonico-Cattaneo-Farrell_2020_ECTJ.pdf).<br>
+_Econometrics Journal_ 23(2): 192-210. [Supplemental Appendix](https://rdpackages.github.io/references/Calonico-Cattaneo-Farrell_2020_ECTJ--Supplement.pdf).
 
 <br><br>
