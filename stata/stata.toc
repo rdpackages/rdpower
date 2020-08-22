@@ -1,7 +1,2 @@
-d RDPOWER: Power and sample size calculations for RD designs using robust bias-corrected local polynomial inference.
-d          https://rdpackages.github.io/rdpower
-
-
-v 0.05
-
+v 0.1
 p rdpower

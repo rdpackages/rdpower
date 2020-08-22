@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.05 02-Apr-2020}{...}
+{* *! version 0.1 2020-08-22}{...}
 {viewerjumpto "Syntax" "rdsampsi##syntax"}{...}
 {viewerjumpto "Description" "rdsampsi##description"}{...}
 {viewerjumpto "Options" "rdsampsi##options"}{...}
@@ -63,19 +63,19 @@
 Companion command is: {help rdpow:rdpow} for power calculations.{p_end}
 
 {p 8 8}A detailed introduction to this command is given in
-{browse "https://sites.google.com/site/rdpackages/rdpower/Cattaneo-Titiunik-VazquezBare_2019_Stata.pdf": Cattaneo, Titiunik and Vazquez-Bare (2019)}.{p_end}
+{browse "https://rdpackages.github.io/references/Cattaneo-Titiunik-VazquezBare_2019_Stata.pdf": Cattaneo, Titiunik and Vazquez-Bare (2019)}.{p_end}
 
-{p 8 8}Companion {browse "www.r-project.org":R} functions are also available {browse "https://sites.google.com/site/rdpackages/rdpower":here}.{p_end}
+{p 8 8}Companion {browse "www.r-project.org":R} functions are also available {browse "https://rdpackages.github.io/rdpower":here}.{p_end}
 
 {p 8 8}This command employs the Stata (and R) package {help rdrobust:rdrobust} for underlying calculations. See
-{browse "https://sites.google.com/site/rdpackages/rdrobust/Calonico-Cattaneo-Titiunik_2014_Stata.pdf":Calonico, Cattaneo and Titiunik (2014)}
+{browse "https://rdpackages.github.io/references/Calonico-Cattaneo-Titiunik_2014_Stata.pdf":Calonico, Cattaneo and Titiunik (2014)}
 and
-{browse "https://sites.google.com/site/rdpackages/rdrobust/Calonico-Cattaneo-Farrell-Titiunik_2017_Stata.pdf":Calonico, Cattaneo, Farrell and Titiunik (2017)}
+{browse "https://rdpackages.github.io/references/Calonico-Cattaneo-Farrell-Titiunik_2017_Stata.pdf":Calonico, Cattaneo, Farrell and Titiunik (2017)}
 for more details.{p_end}
 
 {p 4 8}Related Stata and R packages useful for inference in RD designs are described in the following website:{p_end}
 
-{p 8 8}{browse "https://sites.google.com/site/rdpackages/":https://sites.google.com/site/rdpackages/}{p_end}
+{p 8 8}{browse "https://rdpackages.github.io/":https://rdpackages.github.io/}{p_end}
 
 
 {marker options}{...}
@@ -274,19 +274,19 @@ Options are:{p_end}
 {title:References}
 
 {p 4 8}Calonico, S., M. D. Cattaneo, M. H. Farrell, and R. Titiunik. 2017.
-{browse "https://sites.google.com/site/rdpackages/rdrobust/Calonico-Cattaneo-Farrell-Titiunik_2017_Stata.pdf":rdrobust: Software for Regression Discontinuity Designs}.{p_end}
+{browse "https://rdpackages.github.io/references/Calonico-Cattaneo-Farrell-Titiunik_2017_Stata.pdf":rdrobust: Software for Regression Discontinuity Designs}.{p_end}
 {p 8 8}{it:Stata Journal} 17(2): 372-404.{p_end}
 
 {p 4 8}Calonico, S., M. D. Cattaneo, and R. Titiunik. 2014.
-{browse "https://sites.google.com/site/rdpackages/rdrobust/Calonico-Cattaneo-Titiunik_2014_Stata.pdf":Robust Data-Driven Inference in the Regression-Discontinuity Design}.{p_end}
+{browse "https://rdpackages.github.io/references/Calonico-Cattaneo-Titiunik_2014_Stata.pdf":Robust Data-Driven Inference in the Regression-Discontinuity Design}.{p_end}
 {p 8 8}{it:Stata Journal} 14(4): 909-946.{p_end}
 
 {p 4 8}Cattaneo, M. D., Frandsen, B., and R. Titiunik. 2015.
-{browse "https://sites.google.com/site/rdpackages/rdlocrand/Cattaneo-Frandsen-Titiunik_2015_JCI.pdf":Randomization Inference in the Regression Discontinuity Design: An Application to Party Advantages in the U.S. Senate}.{p_end}
+{browse "https://rdpackages.github.io/references/Cattaneo-Frandsen-Titiunik_2015_JCI.pdf":Randomization Inference in the Regression Discontinuity Design: An Application to Party Advantages in the U.S. Senate}.{p_end}
 {p 8 8}{it:Journal of Causal Inference} 3(1): 1-24.{p_end}
 
 {p 4 8}Cattaneo, M. D., R. Titiunik, and G. Vazquez-Bare. 2019.
-{browse "https://sites.google.com/site/rdpackages/rdpower/Cattaneo-Titiunik-VazquezBare_2019_Stata.pdf":Power Calculations for Regression Discontinuity Designs}.{p_end}
+{browse "https://rdpackages.github.io/references/Cattaneo-Titiunik-VazquezBare_2019_Stata.pdf":Power Calculations for Regression Discontinuity Designs}.{p_end}
 {p 8 8}{it:Stata Journal} 19(1): 210-245.{p_end}
 
 {marker authors}{...}

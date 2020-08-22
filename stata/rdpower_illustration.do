@@ -2,9 +2,9 @@
 ** RDPOWER Stata Package 
 ** Empirical Illustration
 ** Authors: Matias D. Cattaneo, Rocio Titiunik and Gonzalo Vazquez-Bare
-** Date: 03-Apr-2020
+** Date: 2020-08-22
 ********************************************************************************
-** net install rdpower, from(https://sites.google.com/site/rdpackages/rdpower/stata) replace
+** net install rdpower, from(https://raw.githubusercontent.com/rdpackages/rdpower/master/stata) replace
 ********************************************************************************
 ** NOTE: If you are using rdrobust version 2020 or newer, the option 
 ** "masspoints(off) stdvars(on)" may be needed in order to replicate the 
