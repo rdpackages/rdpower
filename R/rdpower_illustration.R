@@ -1,7 +1,7 @@
 ###################################################################
 # rdpower: power calculations for RD designs
 # Illustration file
-# !version 0.5 02-Apr-2020
+# !version 1.0 23-Aug-2020
 # Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ###################################################################
 ## NOTE: if you are using rdrobust version 2020 or newer, the option 
