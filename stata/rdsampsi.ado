@@ -2,7 +2,7 @@
 
 RDSAMPSI: sample size calculation for Regression Discontinuity Designs
 
-*!version 0.1 2020-08-22
+*!version 2.0 17-Dec-2020
 
 Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 
@@ -230,7 +230,7 @@ program define rdsampsi, rclass
 	****************************************************************************
 	** Bias and variance
 	
-	if `nodata' == 0{
+	if `nodata' == 0 {
 		
 		** Variance
 
@@ -326,11 +326,11 @@ program define rdsampsi, rclass
 	
 	di as text "Calculating sample size..."
 	mata: rdpower_powerNR(`N0',`tau',`stilde',`z',`beta')
-	local m = m
+	local m = m_rdpower
 	
 	*** if all!=""?
 	mata: rdpower_powerNR(`N0',`tau'+`bias',`stilde_cl',`z',`beta')
-	local m_cl = m
+	local m_cl = m_rdpower
 	di as text "Sample size obtained."
 
 	
@@ -382,13 +382,13 @@ program define rdsampsi, rclass
 	local denom_cl = `nratio_cl'*`nplus'/`n_hnew_r' + (1-`nratio_cl')*`nminus'/`n_hnew_l'	
 	
 	local M = `m'/`denom'
-	local Ml = ceil(`M'*`nratio')
-	local Mr = ceil(`M'*(1-`nratio'))
+	local Mr = ceil(`M'*`nratio')
+	local Ml = ceil(`M'*(1-`nratio'))
 	local M = `Ml' + `Mr'
 	
 	local M_cl = `m_cl'/`denom_cl'
-	local Ml_cl = ceil(`M_cl'*`nratio_cl')
-	local Mr_cl = ceil(`M_cl'*(1-`nratio_cl'))
+	local Mr_cl = ceil(`M_cl'*`nratio_cl')
+	local Ml_cl = ceil(`M_cl'*(1-`nratio_cl'))
 	local M_cl = `Ml_cl' + `Mr_cl'
 	
 
@@ -602,7 +602,7 @@ program define rdsampsi, rclass
 	** Return values
 
 	return scalar init_cond = `N0'
-	return scalar no_iter = iter
+	return scalar no_iter = iter_rdpower
 	if "`all'" != ""{
 		return scalar sampsi_h_tot_cl = `M_cl'
 		return scalar sampsi_h_r_cl = `Mr_cl'

@@ -2,7 +2,7 @@
 
 Auxiliary functions for rdpow package
 
-*!version 0.1 2020-08-22
+*!version 2.0 17-Dec-2020
 
 Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 
@@ -24,7 +24,7 @@ mata mosave rdpower_powerfun(), replace
 end
 
 ********************************************************************************
-*** Power function derivative
+*** Power function derivative w.r.t n
 
 capture mata: mata drop rdpower_powerfun_dot()
 mata:
@@ -37,7 +37,21 @@ mata mosave rdpower_powerfun_dot(), replace
 end
 
 ********************************************************************************
-*** Mata function: Newton-Raphson
+*** Power function derivative w.r.t tau
+
+capture mata: mata drop rdpower_powerfun_dot_tau()
+mata:
+function rdpower_powerfun_dot_tau(real scalar n,real scalar tau,real scalar stilde,real scalar z)
+{
+	x = (normalden(sqrt(n)*tau/stilde-z)-normalden(sqrt(n)*tau/stilde+z))*sqrt(n)/stilde
+	return(x)
+}
+mata mosave rdpower_powerfun_dot_tau(), replace
+end
+
+
+********************************************************************************
+*** Newton-Raphson for sample size calculation
 
 capture mata: mata drop rdpower_powerNR()
 mata:
@@ -70,10 +84,43 @@ void rdpower_powerNR(real scalar x0,real scalar tau,real scalar stilde,real scal
 	}
 	b = rdpower_powerfun(x1,tau,stilde,z)
 	x1 = ceil(x1)
-	st_numscalar("m",x1)
-	st_numscalar("iter",iter)
-	st_numscalar("powercheck",b)
+	st_numscalar("m_rdpower",x1)
+	st_numscalar("iter_rdpower",iter)
+	st_numscalar("powercheck_rdpower",b)
 }
 mata mosave rdpower_powerNR(), replace
+end
+
+********************************************************************************
+*** Newton-Raphson for MDE calculation
+
+capture mata: mata drop rdpower_powerNR_mde()
+mata:
+void rdpower_powerNR_mde(real scalar n,real scalar tau0,real scalar stilde,real scalar z,real scalar beta)
+{
+	tol = 1
+	iter = 0
+	while (tol>epsilon(1)){
+		++iter
+		// check if derivative at tau0 is too small:
+		while (rdpower_powerfun_dot_tau(n,tau0,stilde,z)<.00001){	
+			tau0 = 1.5*tau0*(rdpower_powerfun(n,tau0,stilde,z)<=beta) + 0.5*tau0*(rdpower_powerfun(n,tau0,stilde,z)>beta)
+			++iter
+		}
+
+		tau1 = tau0 - (rdpower_powerfun(n,tau0,stilde,z)-beta)/rdpower_powerfun_dot_tau(n,tau0,stilde,z)
+		
+		if (tau1==.){
+			break
+		}
+		tol = abs(rdpower_powerfun(n,tau1,stilde,z)-beta)
+		tau0 = tau1
+	}
+	b = rdpower_powerfun(n,tau1,stilde,z)
+	st_numscalar("mde_rdpower",tau1)
+	st_numscalar("iter_rdpower",iter)
+	st_numscalar("powercheck_rdpower",b)
+}
+mata mosave rdpower_powerNR_mde(), replace
 end
 

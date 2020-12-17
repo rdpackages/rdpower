@@ -1,37 +1,33 @@
 {smcl}
 {* *! version 2.0 17-Dec-2020}{...}
-{viewerjumpto "Syntax" "rdsampsi##syntax"}{...}
-{viewerjumpto "Description" "rdsampsi##description"}{...}
-{viewerjumpto "Options" "rdsampsi##options"}{...}
-{viewerjumpto "Examples" "rdsampsi##examples"}{...}
-{viewerjumpto "Saved results" "rdsampsi##saved_results"}{...}
-{viewerjumpto "References" "rdsampsi##references"}{...}
-{viewerjumpto "Authors" "rdsampsi##authors"}{...}
+{viewerjumpto "Syntax" "rdmde##syntax"}{...}
+{viewerjumpto "Description" "rdmde##description"}{...}
+{viewerjumpto "Options" "rdmde##options"}{...}
+{viewerjumpto "Examples" "rdmde##examples"}{...}
+{viewerjumpto "Saved results" "rdmde##saved_results"}{...}
+{viewerjumpto "References" "rdmde##references"}{...}
+{viewerjumpto "Authors" "rdmde##authors"}{...}
+
 
 {title:Title}
 
-{p 4 8}{cmd:rdsampsi} {hline 2} Sample size selection based on power calculations for Regression Discontinuity designs using robust bias-corrected local polynomial inference.{p_end}
+{p 4 8}{cmd:rdmde} {hline 2} Minimum Detectable Effect calculation for Regression Discontinuity designs using robust bias-corrected local polynomial inference.{p_end}
 
 
 {marker syntax}{...}
 {title:Syntax}
 
-{p 4 8}{cmd:rdsampsi} {it:depvar} {it:runvar} {ifin} 
+{p 4 8}{cmd:rdmde} {it:depvar} {it:runvar} {ifin} 
 [{cmd:,} 
 {cmd:c(}{it:#}{cmd:)} 
-{cmd:tau(}{it:#}{cmd:)} 
-{cmd:alpha(}{it:#}{cmd:)}
+{cmd:alpha(}{it:#}{cmd:)} 
 {cmd:beta(}{it:#}{cmd:)} 
 {cmd:{opt ns:amples}(}{it:# # # #}{cmd:)} 
+{cmd:sampsi(}{it:# #}{cmd:)} 
 {cmd:samph(}{it:# #}{cmd:)}
 {cmd:all}
-{cmd:plot} 
-{cmd:graph_range(}{it:# #}{cmd:)} 
-{cmd:graph_step(}{it:#}{cmd:)} 
-{cmd:graph_options(}{it:graph_opt}{cmd:)} 
 {cmd:bias(}{it:# #}{cmd:)}
 {cmd:{opt var:iance}(}{it:# #}{cmd:)}
-{cmd:nratio(}{it:#}{cmd:)}
 {cmd:init_cond(}{it:#}{cmd:)}
 {cmd:covs(}{it:covars}{cmd:)}
 {cmd:covs_drop(}{it:covsdropoption}{cmd:)}
@@ -59,8 +55,8 @@
 {marker description}{...}
 {title:Description}
 
-{p 4 8}{cmd:rdsampsi} provides sample size selection based on power calculations in Regression Discontinuity designs using conventional and robust bias-corrected local polynomial methods.
-Companion command is: {help rdpow:rdpow} for power calculations.{p_end}
+{p 4 8}{cmd:rdmde} provides MDE calculations in Regression Discontinuity designs using conventional and robust bias-corrected local polynomial methods.
+Companion commands are: {help rdpow:rdpow} for power calculations and {help rdsampsi:rdsampsi} for sample size calculations.{p_end}
 
 {p 8 8}A detailed introduction to this command is given in
 {browse "https://rdpackages.github.io/references/Cattaneo-Titiunik-VazquezBare_2019_Stata.pdf": Cattaneo, Titiunik and Vazquez-Bare (2019)}.{p_end}
@@ -81,12 +77,10 @@ for more details.{p_end}
 {marker options}{...}
 {title:Options}
 
-{dlgtab:rdsampsi options}
+{dlgtab:rdmde options}
 
 {p 4 8}{cmd:c(}{it:#}{cmd:)} specifies the RD cutoff for {it:indepvar}.
 Default is {cmd:c(0)}.{p_end}
-
-{p 4 8}{cmd:tau(}{it:#}{cmd:)} specifies the treatment effect under the alternative at which the power function is evaluated. The default is half the standard deviation of the outcome for the untreated group.{p_end}
 
 {p 4 8}{cmd:alpha(}{it:#}{cmd:)} specifies the significance level for the power function.
 Default is {cmd:alpha(.05)}.{p_end}
@@ -94,34 +88,25 @@ Default is {cmd:alpha(.05)}.{p_end}
 {p 4 8}{cmd:beta(}{it:#}{cmd:)} specifies the desired power.
 Default is {cmd:beta(.8)}.{p_end}
 
-{p 4 8}{cmd:{opt ns:amples}(}{it:# # # #}{cmd:)}  sets the total sample size to the left, sample size to the left inside the bandwidth, total sample size to the right and sample size 
-to the right of the cutoff inside the bandwidth to calculate the variance when the running variable is not specified.
+{p 4 8}{cmd:{opt ns:amples}(}{it:# # # #}{cmd:)}  sets the total sample size to the left, sample size to the left inside the bandwidth, total sample size to the right and sample size to the right of the cutoff inside the bandwidth 
+to calculate the variance when the running variable is not specified.
 When this option is not specified, the values are calculated using the running variable.{p_end}
+
+{p 4 8}{cmd:sampsi(}{it:# #}{cmd:)} sets the sample size at each side of the cutoff for power calculation. The first number is the sample size to the left of the cutoff and the second number is the sample size to the right.
+Default values are the sample sizes inside the chosen bandwidth.{p_end}
 
 {p 4 8}{cmd:samph(}{it:# #}{cmd:)} sets the bandwidths at each side of the cutoff for power calculation. The first number is the bandwidth to the left of the cutoff and the second number is the bandwidth to the right. 
 Default values are the bandwidths used by {cmd:rdrobust}.{p_end}
 
 {p 4 8}{cmd:all} displays the power using the conventional variance estimator, in addition to the robust bias corrected one.{p_end}
 
-{p 4 8}{cmd:plot} plots the power function using the robust bias corrected standard error from {cmd:rdrobust}. If {cmd:all} is specified, the conventional power function is also plotted.{p_end}
-
-{p 4 8}{cmd:graph_range(}{it:# #}{cmd:)} specifies the range of the plot when {cmd:plot} option is used.
-Default range is [-1.5*tau ; 1.5*tau].{p_end}
-
-{p 4 8}{cmd:graph_step(}{it:#}{cmd:)} specifies the step increment of the plot when {cmd:plot} option is used.
-Default range is 0.2*range.{p_end}
-
-{p 4 8}{cmd:graph_options(}{it:#}{cmd:)} specifies the graph options (title, axes titles, etc) to be passed to the plot when {cmd:plot} option is used.{p_end}
-
 {p 4 8}{cmd:bias(}{it:# #}{cmd:)} allows the user to set bias to the left and right of the cutoff. If not specified, the biases are estimated using {cmd:rdrobust}.{p_end}
 
 {p 4 8}{cmd:{opt var:iance}(}{it:# #}{cmd:)} allows the user to set variance to the left and right of the cutoff. If not specified, the variances are estimated using {cmd:rdrobust}.{p_end}
 
-{p 4 8}{cmd:nratio(}{it:#}{cmd:)} specifies the proportion of treated units in the window.
-Default is the ratio of the standard deviation of the treated to the sum of the standard deviations for treated and controls.{p_end}
+{p 4 8}{cmd:init_cond(}{it:#}{cmd:)} sets the initial condition for the Newton-Raphson algorithm that finds the MDE.
+Default is 0.2 times the standard deviation of the outcome below the cutoff.{p_end}
 
-{p 4 8}{cmd:init_cond(}{it:#}{cmd:)} sets the initial condition for the Newton-Raphson algorithm that finds the sample size.
-Default is the number of observations in the sample with non-missing values of the outcome and running variable.{p_end}
 
 {dlgtab:rdrobust options}
 
@@ -169,11 +154,7 @@ Options are:{p_end}
 {p 8 12}{opt cercomb1} for min({opt cerrd},{opt cersum}).{p_end}
 {p 8 12}{opt cercomb2} for median({opt certwo},{opt cerrd},{opt cersum}), for each side of the cutoff separately.{p_end}
 {p 8 12}Note: MSE = Mean Square Error; CER = Coverage Error Rate.{p_end}
-{p 8 12}Default is {cmd:bwselect(mserd)}. For details on implementation see
-{browse "http://www-personal.umich.edu/~cattaneo/papers/Calonico-Cattaneo-Titiunik_2014_ECMA.pdf":Calonico, Cattaneo and Titiunik (2014a)},
-{browse "http://www-personal.umich.edu/~cattaneo/papers/Calonico-Cattaneo-Farrell_2016_wp.pdf":Calonico, Cattaneo and Farrell (2016a)},
-and {browse "http://www-personal.umich.edu/~cattaneo/papers/Cattaneo-Farrell-Titiunik_2016_wp.pdf":Calonico, Cattaneo, Farrell and Titiunik (2016)},
-and the companion software articles.{p_end}
+{p 8 12}Default is {cmd:bwselect(mserd)}. For details on implementation, see {help rdbwselect:rdbwselect} and references therein.{p_end}
 
 {p 4 8}{cmd:vce(}{it:vcetype [vceopt1 vceopt2]}{cmd:)} specifies the procedure used to compute the variance-covariance matrix estimator.
 Options are:{p_end}
@@ -214,61 +195,54 @@ Options are:{p_end}
 {title:Example: Cattaneo, Frandsen and Titiunik (2015) Incumbency Data}
 
 {p 4 8}Setup{p_end}
-{p 8 8}{cmd:. use rdpow_senate.dta}{p_end}
+{p 8 8}{cmd:. use rdpower_senate.dta}{p_end}
 
-{p 4 8}Sample size calculation against an alternative hypothesis of tau = 5{p_end}
-{p 8 8}{cmd:. rdsampsi demvoteshfor2 demmv, tau(5)}{p_end}
+{p 4 8}MDE calculation with default values{p_end}
+{p 8 8}{cmd:. rdmde demvoteshfor2 demmv}{p_end}
 
-{p 4 8}Sample size calculation with covariates{p_end}
-{p 8 8}{cmd:. rdsampsi demvoteshfor2 demmv, tau(5) covs(population dopen dmidterm)}{p_end}
+{p 4 8}MDE calculation with user-specified bandwidths{p_end}
+{p 8 8}{cmd:. rdmde demvoteshfor2 demmv, samph(12 13)}{p_end}
 
-{p 4 8}Sample size calculation with user-specified bandwidths{p_end}
-{p 8 8}{cmd:. rdsampsi demvoteshfor2 demmv, tau(5) h(16 18) b(18 20)}{p_end}
-
-{p 4 8}Sample size calculation with user-specified options{p_end}
-{p 8 8}{cmd:. rdsampsi demvoteshfor2 demmv, tau(5) beta(.9) all samph(18 19) nratio(.5)}{p_end}
+{p 4 8}MDE calculation with user-specified sample sizes{p_end}
+{p 8 8}{cmd:. rdmde demvoteshfor2 demmv, sampsi(350 320)}{p_end}
 
 {p 4 8}Power function plot with default options{p_end}
-{p 8 8}{cmd:. rdsampsi demvoteshfor2 demmv, tau(5) plot}{p_end}
+{p 8 8}{cmd:. rdpow demvoteshfor2 demmv, tau(5) plot}{p_end}
 
 {p 4 8}Power function plot with user-specified range and step{p_end}
-{p 8 8}{cmd:. rdsampsi demvoteshfor2 demmv, tau(5) plot graph_range(0 800) graph_step(200)}{p_end}
+{p 8 8}{cmd:. rdpow demvoteshfor2 demmv, tau(5) plot graph_range(-9 9) graph_step(2)}{p_end}
 
 {p 4 8}Power function plot with user-specified options{p_end}
-{p 8 8}{cmd:. rdsampsi demvoteshfor2 demmv, tau(5) plot graph_range(0 800) graph_step(200) graph_options(title(Power function) xtitle(sample size) ytitle(power) graphregion(fcolor(white)))}{p_end}
+{p 8 8}{cmd:. rdpow demvoteshfor2 demmv, tau(5) plot graph_range(-9 9) graph_step(2) graph_options(title(Power function) xline(0, lcolor(black) lpattern(dash))  xtitle(tau) ytitle(power) graphregion(fcolor(white)))}{p_end}
 
 {marker saved_results}{...}
 {title:Saved results}
 
-{p 4 8}{cmd:rdsampsi} saves the following in {cmd:r()}:
+{p 4 8}{cmd:rdpow} saves the following in {cmd:r()}:
 
 {synoptset 20 tabbed}{...}
 {p2col 5 20 24 2: Scalars}{p_end}
-{synopt:{cmd:r(alpha)}}significance level{p_end}
+{synopt:{cmd:r(alpha)}}significance level used in power function{p_end}
 {synopt:{cmd:r(beta)}}desired power{p_end}
-{synopt:{cmd:r(tau)}}desired effect{p_end}
+{synopt:{cmd:r(mde)}}calculated MDE{p_end}
+{synopt:{cmd:r(N_h_l)}}sample size in bandwidth to the left used to calculate variance{p_end}
+{synopt:{cmd:r(N_h_r)}}sample size in bandwidth to the right used to calculate variance{p_end}
+{synopt:{cmd:r(N_l)}}sample size to the left used to calculate variance{p_end}
+{synopt:{cmd:r(N_r)}}sample size to the right used to calculate variance{p_end}
 {synopt:{cmd:r(samph_l)}}bandwidth to the left of the cutoff{p_end}
-{synopt:{cmd:r(samph_h)}}bandwidth to the right of the cutoff{p_end}
-{synopt:{cmd:r(var_l)}}robust bias corrected variance to the left of the cutoff{p_end}
-{synopt:{cmd:r(var_r)}}robust bias corrected variance to the right of the cutoff{p_end}
+{synopt:{cmd:r(samph_r)}}bandwidth to the right of the cutoff{p_end}
+{synopt:{cmd:r(sampsi_l)}}number of observations inside the window to the left of the cutoff{p_end}
+{synopt:{cmd:r(sampsi_r)}}number of observations inside the window to the right of the cutoff{p_end}
+{synopt:{cmd:r(se_rbc)}}robust bias corrected standard error{p_end}
+{synopt:{cmd:r(power_rbc)}}power against tau using robust bias corrected standard error{p_end}
+{synopt:{cmd:r(se_conv)}}conventional standard error{p_end}
+{synopt:{cmd:r(power_conv)}}power against tau using conventional standard error{p_end}
+{synopt:{cmd:r(Vl_rb)}}robust variance to the left of the cutoff{p_end}
+{synopt:{cmd:r(Vr_rb)}}robust variance to the left of the cutoff{p_end}
 {synopt:{cmd:r(bias_l)}}bias to the left of the cutoff{p_end}
-{synopt:{cmd:r(bias_r)}}bias to the right of the cutoff{p_end}
-{synopt:{cmd:r(N_h_l)}}sample size in bandwidth to the left of the cutoff for variance calculation{p_end}
-{synopt:{cmd:r(N_h_r)}}sample size in bandwidth to the right of the cutoff for variance calculation{p_end}
-{synopt:{cmd:r(N_l)}}sample size to the left of the cutoff for variance calculation{p_end}
-{synopt:{cmd:r(N_r)}}sample size to the right of the cutoff for variance calculation{p_end}
-{synopt:{cmd:r(sampsi_tot)}}implied total sample size using robust bias corrected s.e.{p_end}
-{synopt:{cmd:r(sampsi_h_l)}}sample size to the left of the cutoff using robust bias corrected s.e.{p_end}
-{synopt:{cmd:r(sampsi_h_r)}}sample size to the right of the cutoff using robust bias corrected s.e.{p_end}
-{synopt:{cmd:r(sampsi_h_tot)}}sample size inside the window using robust bias corrected s.e.{p_end}
-{synopt:{cmd:r(var_l_cl)}}conventional variance to the left of the cutoff{p_end}
-{synopt:{cmd:r(var_r_cl)}}conventional variance to the right of the cutoff{p_end}
-{synopt:{cmd:r(sampsi_tot_cl)}}implied total sample size using conventional s.e.{p_end}
-{synopt:{cmd:r(sampsi_h_l_cl)}}sample size to the left of the cutoff using conventional s.e.{p_end}
-{synopt:{cmd:r(sampsi_h_r_cl)}}sample size to the right of the cutoff using conventional s.e.{p_end}
-{synopt:{cmd:r(sampsi_h_tot_cl)}}sample size inside the window using conventional s.e.{p_end}
-{synopt:{cmd:r(no_iter)}}number of iterations until convergence of the Newton-Raphson algorithm{p_end}
+{synopt:{cmd:r(bias_r)}}bias to the left of the cutoff{p_end}
 {synopt:{cmd:r(init_cond)}}initial condition of the Newton-Raphson algorithm{p_end}
+
 
 {marker references}{...}
 {title:References}
@@ -288,6 +262,7 @@ Options are:{p_end}
 {p 4 8}Cattaneo, M. D., R. Titiunik, and G. Vazquez-Bare. 2019.
 {browse "https://rdpackages.github.io/references/Cattaneo-Titiunik-VazquezBare_2019_Stata.pdf":Power Calculations for Regression Discontinuity Designs}.{p_end}
 {p 8 8}{it:Stata Journal} 19(1): 210-245.{p_end}
+
 
 {marker authors}{...}
 {title:Authors}

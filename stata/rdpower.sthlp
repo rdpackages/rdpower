@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1 2020-08-22}{...}
+{* *! version 2.0 17-Dec-2020}{...}
 {viewerjumpto "Syntax" "rdpow##syntax"}{...}
 {viewerjumpto "Description" "rdpow##description"}{...}
 {viewerjumpto "Options" "rdpow##options"}{...}

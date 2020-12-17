@@ -8,6 +8,12 @@ This work was supported by the National Science Foundation through grant [SES-13
 
 https://rdpackages.github.io/rdpower
 
+## Major Upgrades
+
+This package was first released in Fall 2016, and had one major upgrade in Fall 2020.
+
+- _Fall 2020 new feature_: command/function `rdmde` for computing minimum detectable effects.
+
 ## Stata Implementation
 
 To install/update in Stata type:
@@ -15,7 +21,7 @@ To install/update in Stata type:
 net install rdpower, from(https://raw.githubusercontent.com/rdpackages/rdpower/master/stata) replace
 ```
 
-- Help: [rdpower](stata/rdpower.pdf), [rdsampsi](stata/rdsampsi.pdf).
+- Help: [rdpower](stata/rdpower.pdf), [rdsampsi](stata/rdsampsi.pdf), [rdmde](stata/rdmde.pdf).
 
 - Replication: [do-file](stata/rdpower_illustration.do), [data-senate](stata/rdpower_senate.dta).
 
