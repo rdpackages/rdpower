@@ -7,6 +7,8 @@ d          Gonzalo Vazquez-Bare, Department of Economics, UC Santa Barbara, gvaz
 d
 d Date: 2020-12-17
 d 
+f rdmde.ado
+f rdmde.sthlp
 f rdpow.ado
 f rdpow.sthlp
 f rdpower.ado
@@ -15,7 +17,9 @@ f rdsampsi.ado
 f rdsampsi.sthlp
 f rdpower_powerfun.mo
 f rdpower_powerfun_dot.mo
+f rdpower_powerfun_dot_tau.mo
 f rdpower_powerNR.mo
+f rdpower_powerNR_mde.mo
 f rdpower_functions.do
 f rdpower_illustration.do
 f rdpower_senate.dta
