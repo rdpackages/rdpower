@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 2.0 17-Dec-2020}{...}
+{* *! version 2.0 18-May-2021}{...}
 {viewerjumpto "Syntax" "rdsampsi##syntax"}{...}
 {viewerjumpto "Description" "rdsampsi##description"}{...}
 {viewerjumpto "Options" "rdsampsi##options"}{...}
