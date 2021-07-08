@@ -1,4 +1,4 @@
-v 0.3
+v 3
 d STATA Package: RDPOWER
 d 
 d Authors: Matias D. Cattaneo, Department of Operations Research and Financial Engineering, Princeton University, cattaneo@princeton.edu
@@ -17,7 +17,9 @@ f rdsampsi.ado
 f rdsampsi.sthlp
 f rdpower_powerfun.mo
 f rdpower_powerfun_dot.mo
+f rdpower_powerfun_dot_tau.mo
 f rdpower_powerNR.mo
+f rdpower_powerNR_mde.mo
 f rdpower_functions.do
 f rdpower_illustration.do
 f rdpower_senate.dta
