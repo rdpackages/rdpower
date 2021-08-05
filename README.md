@@ -8,11 +8,29 @@ This work was supported by the National Science Foundation through grant [SES-13
 
 https://rdpackages.github.io/rdpower
 
+## Queries and Requests
+
+Please email: [rdpackages@googlegroups.com](mailto:rdpackages@googlegroups.com)
+
 ## Major Upgrades
 
 This package was first released in Fall 2016, and had one major upgrade in Fall 2020.
 
 - _Fall 2020 new feature_: command/function `rdmde` for computing minimum detectable effects.
+
+## Python Implementation
+
+Coming soon.
+
+## R Implementation
+
+To install/update in R type:
+```
+install.packages('rdpower')
+```
+- Help: [R Manual](https://cran.r-project.org/web/packages/rdpower/rdpower.pdf), [CRAN repository](https://cran.r-project.org/package=rdpower).
+
+- Replication files: [R-script](R/rdpower_illustration.R), [data-senate](R/rdpower_senate.csv).
 
 ## Stata Implementation
 
@@ -25,15 +43,6 @@ net install rdpower, from(https://raw.githubusercontent.com/rdpackages/rdpower/m
 
 - Replication: [do-file](stata/rdpower_illustration.do), [data-senate](stata/rdpower_senate.dta).
 
-## R Implementation
-
-To install/update in R type:
-```
-install.packages('rdpower')
-```
-- Help: [R Manual](https://cran.r-project.org/web/packages/rdpower/rdpower.pdf), [CRAN repository](https://cran.r-project.org/package=rdpower).
-
-- Replication files: [R-script](R/rdpower_illustration.R), [data-senate](R/rdpower_senate.csv).
 
 ## References
 
