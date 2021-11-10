@@ -1,6 +1,6 @@
 ********************************************************************************
 * Auxiliary functions for rdpow package
-* !version 2.0 18-May-2021
+* !version 2.1 09-Nov-2021
 * Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ********************************************************************************
 

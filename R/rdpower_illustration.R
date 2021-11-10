@@ -1,12 +1,12 @@
 ###################################################################
 # rdpower: power calculations for RD designs
 # Illustration file
-# !version 2.0 17-Dec-2020
+# !version 2.1 09-Nov-2021
 # Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ###################################################################
 ## NOTE: if you are using rdrobust version 2020 or newer, the option
 ## masspoints="off" and stdvars="on" may be needed in order to replicate the
-## results in the paper.
+## results in the Stata journal article.
 ## For example, line 39:
 ##    aux = rdpower(data=Z,tau=5)
 ## should be replaced by:
@@ -30,6 +30,8 @@ names(data)
 Z <- data[c('demvoteshfor2','demmv')]
 # Covariates
 covs <- data[c('population','dopen','dmidterm')]
+# Cluster var
+clustvar <- data$state
 
 
 #################################################################
@@ -112,6 +114,10 @@ aux2 <- rdpower(data=Z,tau=5,p=2,h=20,plot=TRUE)
 aux3 <- rdpower(data=Z,tau=5,p=1,plot=TRUE)
 aux4 <- rdpower(data=Z,tau=5,p=2,plot=TRUE)
 
+# rdpower with clustering
+
+aux <- rdpower(data=Z,tau=5,cluster=clustvar)
+
 #################################################################
 ## RDSAMPSI
 #################################################################
@@ -149,6 +155,10 @@ aux1 <- rdsampsi(data=Z,tau=5,p=0,h=20,plot=TRUE)
 aux2 <- rdsampsi(data=Z,tau=5,p=1,h=20,plot=TRUE)
 aux3 <- rdsampsi(data=Z,tau=5,p=0,plot=TRUE)
 aux4 <- rdsampsi(data=Z,tau=5,p=1,plot=TRUE)
+
+# rdsampsi with clustering
+
+aux <- rdsampsi(data=Z,tau=5,cluster=clustvar)
 
 #################################################################
 ## RDMDE
@@ -201,3 +211,8 @@ nhl <- aux1$Nh.l
 nhr <- aux1$Nh.r
 
 aux2 <- rdsampsi(data=Z,tau=mde,nratio=nhr/(nhl+nhr))
+
+# rdmde with clustering
+
+aux <- rdmde(data=Z,cluster=clustvar)
+

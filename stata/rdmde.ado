@@ -1,6 +1,6 @@
 ********************************************************************************
 * RDMDE: minimum detectable effect calculation for Regression Discontinuity Designs
-* !version 2.0 05-Jul-2021
+* !version 2.1 09-Nov-2021
 * Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ********************************************************************************
 
@@ -263,8 +263,6 @@ program define rdmde, rclass
 
 			local hl = e(h_l)
 			local hr = e(h_r)
-			local n_l = e(N_h_l)
-			local n_r = e(N_h_r)
 
 			if "`bias'" == ""{
 				local bias_l = e(bias_l)/(`hl'^(1+`p'-`deriv'))
@@ -348,7 +346,7 @@ program define rdmde, rclass
 			local ntilde_r = `n_hnew_r'
 	}
 	
-	local ntilde = `nplus'*`ntilde_r'/`n_hnew_r' + `nminus'*`ntilde_l'/`n_hnew_l'
+	local ntilde = `nplus'*(`ntilde_r'/`n_hnew_r') + `nminus'*(`ntilde_l'/`n_hnew_l')
 
 	****************************************************************************
 	** Variance and bias adjustment
@@ -419,22 +417,13 @@ program define rdmde, rclass
 	}
 	di as text "MDE obtained."
 	
-
-	** Descriptive statistics for display
-	
+	****************************************************************************
+	** Descriptive statistics for display	
 		
 	if `nodata' == 0 {
 	
 		* Left panel
 	
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster"{
-			qui tab `clustvar' if `x'>=`c' & `x'!=. & `y'!=. & `touse'
-			local gplus = r(r)
-			
-			qui tab `clustvar' if `x'<`c' & `x'!=. & `y'!=. & `touse'
-			local gminus = r(r)
-		}
-
 		qui count if `x'>=`c' & `x'!=. & `y'!=. & `touse'
 		local nplus_disp = r(N)
 		
@@ -452,6 +441,20 @@ program define rdmde, rclass
 		qui count if `x'<`c'&`x'>=`c'-`hl'  & `x'!=. & `y'!=. & `touse'
 		local n_h_l_disp = r(N)
 		
+		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster"{
+			qui tab `clustvar' if `x'>=`c' & `x'!=. & `y'!=. & `touse'
+			local gplus = r(r)
+			
+			qui tab `clustvar' if `x'<`c' & `x'!=. & `y'!=. & `touse'
+			local gminus = r(r)
+			
+			qui tab `clustvar' if `x'>=`c'&`x'<=`c'+`hr' & `x'!=. & `y'!=. & `touse'
+			local gplus_h_r = r(r)
+			
+			qui tab `clustvar' if `x'<`c'&`x'>=`c'-`hl' & `x'!=. & `y'!=. & `touse'
+			local gminus_h_l = r(r)
+		}
+	
 		if "`hl'" == "" | "`hr'" == ""{
 			local hl = .
 			local hr = .
@@ -510,16 +513,21 @@ program define rdmde, rclass
 		disp as text "{ralign 21: Cutoff c = `c'}"      _col(22) " {c |} " _col(23) in gr "Left of " in yellow "c"  _col(36) in gr "Right of " in yellow "c"  _col(54) as text "Number of obs = "  in yellow %10.0f `N_disp'
 		disp as text "{hline 22}{c +}{hline 22}"                                                                                                              _col(54) as text "BW type       = "  in yellow "{ralign 10:`bwselect'}" 
 		disp as text "{ralign 21:Number of obs}"        _col(22) " {c |} " _col(23) as result %9.0f `nminus_disp'        _col(37) %9.0f  `nplus_disp'         _col(54) as text "Kernel        = "  in yellow "{ralign 10:`kernel_type'}" 
-		disp as text "{ralign 21:Eff. Number of obs}"   _col(22) " {c |} " _col(23) as result %9.0f `n_h_l_disp'      	 _col(37) %9.0f  `n_h_r_disp'      _col(54) as text "VCE method    = "  in yellow "{ralign 10:`vce_type'}" 
+		disp as text "{ralign 21:Eff. Number of obs}"   _col(22) " {c |} " _col(23) as result %9.0f `n_h_l_disp'      	 _col(37) %9.0f  `n_h_r_disp'         _col(54) as text "VCE method    = "  in yellow "{ralign 10:`vce_type'}" 
 		disp as text "{ralign 21:BW loc. poly. (h)}"	_col(22) " {c |} " _col(23) as result %9.3f `hl'     	    	 _col(37) %9.3f  `hr'				  _col(54) as text "Derivative    = "  in yellow %10.0f `deriv'
-		disp as text "{ralign 21:Order loc. poly. (p)}"	_col(22) " {c |} " _col(23) as result %9.0f `p'     	    	 _col(37) %9.0f  `p'				 // _col(54) as text "HA:       tau = "  in yellow %10.3f `tau'
-
+		disp as text "{ralign 21:Order loc. poly. (p)}"	_col(22) " {c |} " _col(23) as result %9.0f `p'     	    	 _col(37) %9.0f  `p'				 
+		if "`clust_opt'" == "cluster" | "`clust_opt'" == "nncluster"{			
+			disp as text "{ralign 21:Number of clusters}"        _col(22) " {c |} " _col(23) as result %9.0f `gminus'        _col(37) %9.0f  `gplus'
+			disp as text "{ralign 21:Eff. Num. of clusters}"   _col(22) " {c |} " _col(23) as result %9.0f `gminus_h_l'      	 _col(37) %9.0f  `gplus_h_r'
+		}
 		disp as text "{hline 22}{c +}{hline 22}"
-
+	
 		disp as text "{ralign 21:Sampling BW}"		    _col(22) " {c |} " _col(23) as result %9.3f `hnew_l'    	_col(37) %9.3f  `hnew_r'				  	  
-		disp as text "{ralign 21:New sample}"			_col(22) " {c |} " _col(23) as result %9.0f `ntilde_l'  	_col(37) %9.0f  `ntilde_r'
 		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster" {
-			disp in smcl in gr "{ralign 21:Number of clusters}"   _col(22) " {c |} " _col(23) as result %9.0f `gplus'   _col(37) %9.0f  `gminus' 
+			disp as text "{ralign 21:New cluster sample}" _col(22) " {c |} " _col(23) as result %9.0f `ntilde_l'  	_col(37) %9.0f  `ntilde_r'
+		}
+		else{
+			disp as text "{ralign 21:New sample}"			_col(22) " {c |} " _col(23) as result %9.0f `ntilde_l'  	_col(37) %9.0f  `ntilde_r'
 		}
 		disp ""
 

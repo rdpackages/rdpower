@@ -1,6 +1,6 @@
 ********************************************************************************
 * RDSAMPSI: sample size calculation for Regression Discontinuity Designs
-* !version 2.0 05-Jul-2021
+* !version 2.1 09-Nov-2021
 * Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ********************************************************************************
 
@@ -240,8 +240,6 @@ program define rdsampsi, rclass
 												 
 			local hl = e(h_l)
 			local hr = e(h_r)
-			local n_l = e(N_h_l)
-			local n_r = e(N_h_r)
 					
 			if "`bias'" == ""{
 				local bias_l = e(bias_l)/(`hl'^(1+`p'-`deriv'))
@@ -392,15 +390,8 @@ program define rdsampsi, rclass
 	** Descriptive statistics for display
 	
 	if `nodata'== 0 {
-		* Left panel
 		
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster"{
-			qui tab `clustvar' if `x'>=`c' & `x'!=. & `y'!=. & `touse'
-			local gplus = r(r)
-			
-			qui tab `clustvar' if `x'<`c' & `x'!=. & `y'!=. & `touse'
-			local gminus = r(r)
-		}
+		* Left panel
 
 		qui count if `x'>=`c' & `x'!=. & `y'!=. & `touse'
 		local nplus_disp = r(N)
@@ -418,6 +409,20 @@ program define rdsampsi, rclass
 		
 		qui count if `x'<`c'&`x'>=`c'-`hl'  & `x'!=. & `y'!=. & `touse'
 		local n_hnew_l_disp = r(N)	
+		
+		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster"{
+			qui tab `clustvar' if `x'>=`c' & `x'!=. & `y'!=. & `touse'
+			local gplus = r(r)
+			
+			qui tab `clustvar' if `x'<`c' & `x'!=. & `y'!=. & `touse'
+			local gminus = r(r)
+			
+			qui tab `clustvar' if `x'>=`c'&`x'<=`c'+`hr' & `x'!=. & `y'!=. & `touse'
+			local gplus_h_r = r(r)
+			
+			qui tab `clustvar' if `x'<`c'&`x'>=`c'-`hl' & `x'!=. & `y'!=. & `touse'
+			local gminus_h_l = r(r)
+		}
 		
 		* Right panel
 		
@@ -482,18 +487,30 @@ program define rdsampsi, rclass
 	disp as text "{ralign 21:Eff. Number of obs}"   _col(22) " {c |} " _col(23) as result %9.0f `n_hnew_l_disp' _col(37) %9.0f  `n_hnew_r_disp'           _col(54) as text "VCE method    = "  in yellow "{ralign 10:`vce_type'}" 
 	disp as text "{ralign 21:BW loc. poly. (h)}"	_col(22) " {c |} " _col(23) as result %9.3f `hl'     	    _col(37) %9.3f  `hr'					  _col(54) as text "Derivative    = "  in yellow %10.0f `deriv'
 	disp as text "{ralign 21:Order loc. poly. (p)}"	_col(22) " {c |} " _col(23) as result %9.0f `p'     	    _col(37) %9.0f  `p'					      _col(54) as text "HA:       tau = "  in yellow %10.3f `tau'
-	disp as text "{hline 22}{c +}{hline 22}"																											  _col(54) as text "Power         = "  in yellow %10.3f `beta'
-	if "`all'" != ""{
-		disp as text "{ralign 21:Sampling BW}"			_col(22) " {c |} " _col(23) as result %9.3f `hnew_l'    	_col(37) %9.3f  `hnew_r'			  _col(54) as text "Size dist.    = "  in yellow %10.3f `size_dist' 
-	}
-	else {
+	
+	
+	if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster" {
+		disp as text "{ralign 21:Number of clusters}"        _col(22) " {c |} " _col(23) as result %9.0f `gminus'        _col(37) %9.0f  `gplus'         _col(54) as text "Power         = "  in yellow %10.3f `beta'
+		if "`all'" != ""{
+			disp as text "{ralign 21:Eff. Num. of clusters}"   _col(22) " {c |} " _col(23) as result %9.0f `gminus_h_l'      _col(37) %9.0f  `gplus_h_r' _col(54) as text "Size dist.    = "  in yellow %10.3f `size_dist' 
+		}
+		else {
+			disp as text "{ralign 21:Eff. Num. of clusters}"   _col(22) " {c |} " _col(23) as result %9.0f `gminus_h_l'      _col(37) %9.0f  `gplus_h_r' 
+		}
+		disp as text "{hline 22}{c +}{hline 22}"
 		disp as text "{ralign 21:Sampling BW}"			_col(22) " {c |} " _col(23) as result %9.3f `hnew_l'    	_col(37) %9.3f  `hnew_r'
 	}
-	if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster" {
-			disp in smcl in gr "{ralign 21:Number of clusters}"   _col(22) " {c |} " _col(23) as result %9.0f `gplus'   _col(37) %9.0f  `gminus' 
+	else {
+		disp as text "{hline 22}{c +}{hline 22}"																											  _col(54) as text "Power         = "  in yellow %10.3f `beta'
+		if "`all'" != ""{
+			disp as text "{ralign 21:Sampling BW}"			_col(22) " {c |} " _col(23) as result %9.3f `hnew_l'    	_col(37) %9.3f  `hnew_r'			  _col(54) as text "Size dist.    = "  in yellow %10.3f `size_dist' 
+		}
+		else {
+			disp as text "{ralign 21:Sampling BW}"			_col(22) " {c |} " _col(23) as result %9.3f `hnew_l'    	_col(37) %9.3f  `hnew_r'
+		}
 	}
-	
 	di ""
+	
 	if `nodata' == 0{
 		if "`covs'" == ""{
 			di as text _newline "Outcome: " as res "`y'" as text ". Running variable: " as res "`x'" as text "."
@@ -504,7 +521,13 @@ program define rdsampsi, rclass
 	}
 	
 	di as text "{hline 22}{c TT}{hline 56}"
-	di as text "Chosen sample sizes" 				_col(22) " {c |}"	  _col(35) "Sample size in window"										_col(70) "Proportion"
+	if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster" {
+		di as text  				_col(22) " {c |}"	  _col(30) "Number of clusters in window"										_col(70) "Proportion"
+	}
+	else {
+		di as text  				_col(22) " {c |}"	  _col(32) "Number of obs in window"										_col(70) "Proportion"
+
+	}
 	di as text 						 				_col(22) " {c |}"	  _col(27) "[c-h,c)"			_col(41) "[c,c+h]"	_col(56) "Total"	_col(72) "[c,c+h]"
 	di as text "{hline 22}{c +}{hline 56}"
 

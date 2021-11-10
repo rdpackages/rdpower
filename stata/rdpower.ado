@@ -1,6 +1,6 @@
 ********************************************************************************
 * RDPOW: power calculation for Regression Discontinuity Designs
-* !version 2.0 18-May-2021
+* !version 2.1 09-Nov-2021
 * Authors: Matias Cattaneo, Rocío Titiunik, Gonzalo Vazquez-Bare
 ********************************************************************************
 

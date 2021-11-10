@@ -2,13 +2,13 @@
 ** RDPOWER Stata Package 
 ** Empirical Illustration
 ** Authors: Matias D. Cattaneo, Rocio Titiunik and Gonzalo Vazquez-Bare
-** Date: 2021-07-05
+** Date: 2021-11-09
 ********************************************************************************
 ** net install rdpower, from(https://raw.githubusercontent.com/rdpackages/rdpower/master/stata) replace
 ********************************************************************************
 ** NOTE: If you are using rdrobust version 2020 or newer, the option 
 ** "masspoints(off) stdvars(on)" may be needed in order to replicate the 
-** results in the paper. For example, line 31:
+** results in the Stata journal article. For example, line 31:
 **
 **     rdpow $Y $R, tau(5)
 **
@@ -112,6 +112,10 @@ rdpow $Y $R, tau(5) p(1) plot
 
 rdpow $Y $R, tau(5) p(2) plot
 
+** rdpower with clustering
+
+rdpow $Y $R, tau(5) vce(cluster state)
+
 ********************************************************************************
 ** RDSAMPSI
 ********************************************************************************
@@ -152,6 +156,10 @@ rdsampsi $Y $R, tau(5) p(1) h(20) plot
 rdsampsi $Y $R, tau(5) p(0) plot
 
 rdsampsi $Y $R, tau(5) p(1) plot
+
+** rdsampsi with clustering
+
+rdsampsi $Y $R, tau(5) vce(cluster state)
 
 ********************************************************************************
 ** RDMDE
@@ -197,3 +205,7 @@ rdmde $Y $R
 local mde = r(mde)
 local nratio = r(N_h_r) / (r(N_h_r)+r(N_h_l))
 rdsampsi $Y $R, tau(`mde') nratio(`nratio')
+
+** rdmde with clustering
+
+rdmde $Y $R, vce(cluster state)
