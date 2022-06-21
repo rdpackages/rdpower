@@ -1,6 +1,6 @@
 ###################################################################
 # rdsampsi: sample size calculations for RD designs
-# !version 2.1 09-Nov-2021
+# !version 2.2 20-Jun-2022
 # Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ###################################################################
 
@@ -357,7 +357,7 @@ rdsampsi <- function(data = NULL,
 
     n.hnew.r.disp <- sum(R>=cutoff & R<= cutoff + hr & !is.na(Y) & !is.na(R))
     n.hnew.l.disp <- sum(R<cutoff & R>= cutoff - hl & !is.na(Y) & !is.na(R))
-    
+
     if (!is.null(cluster)){
       gplus <- length(table(cluster[R>=cutoff & !is.na(Y) & !is.na(R)]))
       gminus <- length(table(cluster[R<cutoff & !is.na(Y) & !is.na(R)]))
@@ -404,13 +404,13 @@ rdsampsi <- function(data = NULL,
     kernel_type <- NA
     vce_type <- NA
   }
-  
+
   # Size distortion
-  
+
   if (all==TRUE){
     se_cl_aux <- stilde.cl / sqrt(m.cl)
     size_dist <- 1 - pnorm(bias/se_cl_aux+z) + pnorm(bias/se_cl_aux-z)
-    
+
   }
 
 
@@ -449,19 +449,19 @@ rdsampsi <- function(data = NULL,
   #cat(paste0(format('Chosen sample sizes',   width=33),
   #           format('Sample size in window', width=35),
   #           format('Proportion',            width=15))); cat('\n')
-  
+
   if (!is.null(cluster)){
     cat(paste0(format('',   width=28),
                format('Number of clusters in window', width=35),
                format('Proportion',            width=15))); cat('\n')
-  } 
+  }
   else{
     cat(paste0(format('',   width=33),
                format('Number of obs in window', width=35),
                format('Proportion',            width=15))); cat('\n')
   }
-  
-  
+
+
 
   cat(paste0(format('',        width=25),
              format('[c-h,c)', width=15),

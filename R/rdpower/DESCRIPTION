@@ -1,7 +1,7 @@
 Package: rdpower
 Type: Package
 Title: Power Calculations for RD Designs
-Version: 2.1
+Version: 2.2
 Author: Matias D. Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 Maintainer: Gonzalo Vazquez-Bare <gvazquez@econ.ucsb.edu>
 Description: The regression discontinuity (RD) design is a popular quasi-experimental design for causal inference and policy evaluation. The 'rdpower' package provides tools to perform power, sample size and MDE calculations in RD designs: rdpower() calculates the power of an RD design, rdsampsi() calculates the required sample size to achieve a desired power and rdmde() calculates minimum detectable effects. See Cattaneo, Titiunik and Vazquez-Bare (2019) <https://rdpackages.github.io/references/Cattaneo-Titiunik-VazquezBare_2019_Stata.pdf> for further methodological details.
@@ -9,4 +9,4 @@ Imports:
     rdrobust
 License: GPL-2
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0

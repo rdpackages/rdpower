@@ -1,6 +1,6 @@
 ###################################################################
 # rdmde: minimum detectable effect calculations for RD designs
-# !version 2.1 09-Nov-2021
+# !version 2.2 20-Jun-2022
 # Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ###################################################################
 
@@ -370,7 +370,7 @@ rdmde <- function(data = NULL,
 
     nhr.disp <- sum(R>=cutoff & R<= cutoff + hr & !is.na(Y) & !is.na(R))
     nhl.disp <- sum(R<cutoff & R>= cutoff - hl & !is.na(Y) & !is.na(R))
-    
+
     if (!is.null(cluster)){
       gplus <- length(table(cluster[R>=cutoff & !is.na(Y) & !is.na(R)]))
       gminus <- length(table(cluster[R<cutoff & !is.na(Y) & !is.na(R)]))
@@ -441,7 +441,7 @@ rdmde <- function(data = NULL,
     cat(paste0(format("Eff. num. of clusters", width=22), format(toString(gminus_h_l), width=16), format(toString(gplus_h_r),         width=16))); cat("\n")
     text_aux<- "New cluster sample"
   }
-  
+
   cat(paste0(format("Sampling BW",    width=22), format(toString(round(hnew.l,3)), width=16), format(toString(round(hnew.r,3)),   width=16))); cat("\n")
   cat(paste0(format(text_aux,         width=22), format(toString(ntilde.l),        width=16), format(toString(ntilde.r),          width=16))); cat("\n")
   cat("\n\n")

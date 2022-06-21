@@ -1,6 +1,6 @@
 ###################################################################
 # rdpower: power calculations for RD designs
-# !version 2.1 09-Nov-2021
+# !version 2.2 20-Jun-2022
 # Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ###################################################################
 
@@ -405,7 +405,7 @@ rdpower <- function(data = NULL,
   if (all==TRUE){
     cat(paste0(format('Size dist.    =', width=22), round(power.conv.list[4]-alpha,3))); cat("\n")
   }
-  
+
   cat('\n\n')
 
   cat(paste0(format(paste0("Cutoff c = ", toString(round(cutoff, 3))), width=22), format("Left of c", width=16), format("Right of c", width=16))); cat("\n")
@@ -413,7 +413,7 @@ rdpower <- function(data = NULL,
   cat(paste0(format("Eff. number of obs", width=22), format(toString(nhl.disp),        width=16), format(toString(nhr.disp),          width=16))); cat("\n")
   cat(paste0(format("BW loc. poly.",      width=22), format(toString(round(hl,3)),     width=16), format(toString(round(hr,3)),       width=16))); cat("\n")
   cat(paste0(format("Order loc. poly.",   width=22), format(toString(p),               width=16), format(toString(p),                 width=16))); cat("\n")
-  
+
   text_aux <- "New sample"
   if (!is.null(cluster)){
     cat(paste0(format("Number of clusters",    width=22), format(toString(gminus),     width=16), format(toString(gplus),             width=16))); cat("\n")
@@ -421,7 +421,7 @@ rdpower <- function(data = NULL,
     text_aux<- "New cluster sample"
   }
 
-    
+
   cat(paste0(format("Sampling BW",        width=22), format(toString(round(hnew.l,3)), width=16), format(toString(round(hnew.r,3)),   width=16))); cat("\n")
   cat(paste0(format(text_aux,         width=22), format(toString(ntilde.l),        width=16), format(toString(ntilde.r),          width=16))); cat("\n")
   cat("\n\n")
