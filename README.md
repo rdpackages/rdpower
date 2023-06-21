@@ -1,6 +1,6 @@
 # RDPOWER
 
-The ``rdpower`` package provides Stata and R implementations of power, sample size, and minimum detectable effects calculations using robust bias-corrected local polynomial inference methods.
+The ``rdpower`` package provides Python, R, and Stata implementations of power, sample size, and minimum detectable effects calculations using robust bias-corrected local polynomial inference methods.
 
 This work was supported by the National Science Foundation through grant [SES-1357561](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1357561).
 
@@ -20,7 +20,14 @@ This package was first released in Fall 2016, and had one major upgrade in Fall 
 
 ## Python Implementation
 
-Coming soon.
+To install/update in Python type:
+```
+pip install rdpower
+```
+
+- Help: [PYPI repository](https://pypi.org/project/rdpower/).
+
+- Replication: [py-script](python/rdpower_illustration.py), [senate data](python/rdpower_senate.csv).
 
 ## R Implementation
 

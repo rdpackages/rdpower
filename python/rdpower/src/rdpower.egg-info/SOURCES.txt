@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+setup.cfg
+src/rdpower/__init__.py
+src/rdpower/rdmde.py
+src/rdpower/rdpower.py
+src/rdpower/rdpower_fun.py
+src/rdpower/rdsampsi.py
+src/rdpower.egg-info/PKG-INFO
+src/rdpower.egg-info/SOURCES.txt
+src/rdpower.egg-info/dependency_links.txt
+src/rdpower.egg-info/requires.txt
+src/rdpower.egg-info/top_level.txt

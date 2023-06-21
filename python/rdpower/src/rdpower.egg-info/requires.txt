@@ -1,0 +1,3 @@
+numpy
+scipy
+rdrobust>=1.1.0
