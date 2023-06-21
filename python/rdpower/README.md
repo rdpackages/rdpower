@@ -1,6 +1,6 @@
 # rdpower: Power and Sample Size Calculations for RD Designs
 
-The regression discontinuity (RD) design is a popular quasi-experimental design for causal inference and policy evaluation. The `rdpower` package provides tools to perform power, sample size and MDE calculations in RD designs: `rdpower` calculates the power of an RD design, `rdsampsi` calculates the required sample size to achieve a desired power and `rdmde` calculates minimum detectable effects. This package relies on the `rdrobust` package. See Calonico, Cattaneo and Titiunik (2014, 2015) and Calonico, Cattaneo, Farrell and Titiunik (2017). For more details visit \url{https://rdpackages.github.io/}.
+The regression discontinuity (RD) design is a popular quasi-experimental design for causal inference and policy evaluation. The `rdpower` package provides tools to perform power, sample size and MDE calculations in RD designs: `rdpower` calculates the power of an RD design, `rdsampsi` calculates the required sample size to achieve a desired power and `rdmde` calculates minimum detectable effects. This package relies on the `rdrobust` package. See Calonico, Cattaneo and Titiunik (2014, 2015) and Calonico, Cattaneo, Farrell and Titiunik (2017). For more details visit [https://rdpackages.github.io/rdpower/](https://rdpackages.github.io/rdpower/).
 
 ## References
 
