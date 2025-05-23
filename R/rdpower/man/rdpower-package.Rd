@@ -3,7 +3,6 @@
 \docType{package}
 \name{rdpower-package}
 \alias{rdpower-package}
-\alias{_PACKAGE}
 \alias{rdpower_package}
 \title{rdpower: Power and Sample Size Calculations for RD Designs}
 \description{

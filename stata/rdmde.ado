@@ -2,7 +2,7 @@
 * RDMDE: minimum detectable effect calculation for Regression Discontinuity Designs
 * Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ********************************************************************************
-*!version 2.1 20-Jun-2022
+*!version 2.2 22-May-2025
 
 version 13
 

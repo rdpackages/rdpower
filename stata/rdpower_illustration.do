@@ -2,7 +2,7 @@
 ** RDPOWER Stata Package 
 ** Empirical Illustration
 ** Authors: Matias D. Cattaneo, Rocio Titiunik and Gonzalo Vazquez-Bare
-** Date: 2022-06-20
+** Date: 2025-05-22
 ********************************************************************************
 ** net install rdpower, from(https://raw.githubusercontent.com/rdpackages/rdpower/master/stata) replace
 ********************************************************************************
