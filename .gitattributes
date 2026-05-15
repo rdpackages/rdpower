@@ -1,0 +1,32 @@
+.editorconfig text eol=lf
+.gitattributes text eol=lf
+.gitignore text eol=lf
+CONTRIBUTING.md text eol=lf
+README.md text eol=lf
+*.md text eol=lf
+*.cfg text eol=lf
+*.toml text eol=lf
+*.py text eol=lf
+*.R text eol=lf
+*.Rd text eol=lf
+*.ado text eol=lf
+*.do text eol=lf
+*.sthlp text eol=lf
+*.pkg text eol=lf
+*.toc text eol=lf
+
+.github/** text eol=lf
+docs/** text eol=lf
+scripts/** text eol=lf
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+*.dta binary
+*.docx binary
+*.mo binary
+*.pdf binary
+*.rda binary
+*.tar.gz binary
+*.whl binary

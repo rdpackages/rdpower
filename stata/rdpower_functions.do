@@ -1,10 +1,10 @@
 ********************************************************************************
 * Auxiliary functions for rdpow package
-* Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
+* Authors: Matias D. Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ********************************************************************************
-*!version 2.2 22-May-2025
+*!version 3.0 15-May-2026
 
-version 13
+version 16.0
 
 ********************************************************************************
 *** Power function

@@ -1,7 +1,7 @@
 ###################################################################
 # Auxiliary functions for rdpower
-# !version 2.3 22-May-2025
-# Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
+# !version 3.0 15-May-2026
+# Authors: Matias D. Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ###################################################################
 
 
@@ -54,16 +54,20 @@ rdpower.powerNR <- function(x0,tau,stilde,z,beta){
     iter <- iter + 1
     k <- 1
     # Check if derivative at x0 is too small
-    while (rdpower.powerfun.dot(x0,tau,stilde,z)<.00001){
-      x0 <- 1.2*x0*(rdpower.powerfun(x0,tau,stilde,z)<=beta) + .8*x0*(rdpower.powerfun(x0,tau,stilde,z)>beta)
+    dot0 <- rdpower.powerfun.dot(x0,tau,stilde,z)
+    power0 <- rdpower.powerfun(x0,tau,stilde,z)
+    while (dot0<.00001){
+      x0 <- 1.2*x0*(power0<=beta) + .8*x0*(power0>beta)
       iter <- iter + 1
+      dot0 <- rdpower.powerfun.dot(x0,tau,stilde,z)
+      power0 <- rdpower.powerfun(x0,tau,stilde,z)
     }
 
-    x1 <- x0 - (rdpower.powerfun(x0,tau,stilde,z)-beta)/rdpower.powerfun.dot(x0,tau,stilde,z)
+    x1 <- x0 - (power0-beta)/dot0
 
     # Check if x1 is negative or too small
     while (x1<2){
-      x1 <- x0 - k*(rdpower.powerfun(x0,tau,stilde,z)-beta)/rdpower.powerfun.dot(x0,tau,stilde,z)
+      x1 <- x0 - k*(power0-beta)/dot0
       k <- k/2
       iter <- iter + 1
     }
@@ -96,12 +100,16 @@ rdpower.powerNR.mde <- function(n,tau0,stilde,z,beta){
     iter <- iter + 1
 
     # Check if derivative at x0 is too small
-    while (rdpower.powerfun.dot.tau(n,tau0,stilde,z)<.00001){
-      x0 <- 1.5*tau0*(rdpower.powerfun(n,tau0,stilde,z)<=beta) + .5*tau0*(rdpower.powerfun(n,tau0,stilde,z)>beta)
+    dot0 <- rdpower.powerfun.dot.tau(n,tau0,stilde,z)
+    power0 <- rdpower.powerfun(n,tau0,stilde,z)
+    while (dot0<.00001){
+      tau0 <- 1.5*tau0*(power0<=beta) + .5*tau0*(power0>beta)
       iter <- iter + 1
+      dot0 <- rdpower.powerfun.dot.tau(n,tau0,stilde,z)
+      power0 <- rdpower.powerfun(n,tau0,stilde,z)
     }
 
-    tau1 <- tau0 - (rdpower.powerfun(n,tau0,stilde,z)-beta)/rdpower.powerfun.dot.tau(n,tau0,stilde,z)
+    tau1 <- tau0 - (power0-beta)/dot0
 
 
     tol <- abs(rdpower.powerfun(n,tau1,stilde,z)-beta)

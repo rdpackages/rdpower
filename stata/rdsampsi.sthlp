@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 2.2 22-May-2025}{...}
+{* *! version 3.0 15-May-2026}{...}
 {viewerjumpto "Syntax" "rdsampsi##syntax"}{...}
 {viewerjumpto "Description" "rdsampsi##description"}{...}
 {viewerjumpto "Options" "rdsampsi##options"}{...}
@@ -48,10 +48,15 @@
 {cmd:weights(}{it:weightsvar}{cmd:)}
 {cmd:scalepar(}{it:#}{cmd:)}
 {cmd:scaleregul(}{it:#}{cmd:)}
+{cmd:level(}{it:#}{cmd:)}
 {cmd:masspoints(}{it:masspointsoption}{cmd:)}
 {cmd:bwcheck(}{it:#}{cmd:)}
 {cmd:bwrestrict(}{it:bwropt}{cmd:)}
 {cmd:stdvars(}{it:stdopt}{cmd:)}
+{cmd:nochecks}
+{cmd:nowarnings}
+{cmd:detail}
+{cmd:vleverage}
 ]{p_end}
 
 {synoptset 28 tabbed}{...}
@@ -72,6 +77,8 @@ Companion command is: {help rdpow:rdpow} for power calculations.{p_end}
 and
 {browse "https://rdpackages.github.io/references/Calonico-Cattaneo-Farrell-Titiunik_2017_Stata.pdf":Calonico, Cattaneo, Farrell and Titiunik (2017)}
 for more details.{p_end}
+
+{p 8 8}Requires Stata 16 or newer, matching the current {cmd:rdrobust} Stata package.{p_end}
 
 {p 4 8}Related Stata and R packages useful for inference in RD designs are described in the following website:{p_end}
 
@@ -129,7 +136,7 @@ Default is the number of observations in the sample with non-missing values of t
 
 {p 4 8}{cmd:covs(}{it:covars}{cmd:)} specifies additional covariates to be used for estimation and inference.{p_end}
 
-{p 4 8}{cmd:covs_drop(}{it:covsdropoption}{cmd:)} specifies options to assess collinearity in covariates to be used for estimation and inference. Option {opt on} drops collinear additional covariates (default choice). Option {opt off} only checks collinear additional covariates but does not drop them.{p_end}
+{p 4 8}{cmd:covs_drop(}{it:covsdropoption}{cmd:)} assesses collinearity in additional covariates used for estimation and inference. Options {opt pinv} (default choice) and {opt invsym} drop collinear additional covariates, differing only in the type of inverse function used. Option {opt off} omits the check for collinear additional covariates.{p_end}
 
 {p 4 8}{cmd:deriv(}{it:#}{cmd:)} specifies the order of the derivative of the regression functions to be estimated.
 Default is {cmd:deriv(0)}. Setting {cmd:deriv(1)} results in estimation of a Kink RD design (up to scale).{p_end}
@@ -182,9 +189,13 @@ Options are:{p_end}
 {p 8 12}{cmd:vce(hc1)} for heteroskedasticity-robust plug-in residuals variance estimator with {it:hc1} weights.{p_end}
 {p 8 12}{cmd:vce(hc2)} for heteroskedasticity-robust plug-in residuals variance estimator with {it:hc2} weights.{p_end}
 {p 8 12}{cmd:vce(hc3)} for heteroskedasticity-robust plug-in residuals variance estimator with {it:hc3} weights.{p_end}
-{p 8 12}{cmd:vce(nncluster }{it:clustervar [nnmatch]}{cmd:)} for cluster-robust nearest neighbor variance estimation using with {it:clustervar} indicating the cluster ID variable and {it: nnmatch} matches indicating the minimum number of neighbors to be used.{p_end}
-{p 8 12}{cmd:vce(cluster }{it:clustervar}{cmd:)} for cluster-robust plug-in residuals variance estimation with degrees-of-freedom weights and {it:clustervar} indicating the cluster ID variable.{p_end}
+{p 8 12}{cmd:vce(cluster }{it:clustervar}{cmd:)} for cluster-robust plug-in residuals variance estimation with degrees-of-freedom weights; equivalent to {cmd:vce(cr1 }{it:clustervar}{cmd:)}.{p_end}
+{p 8 12}{cmd:vce(cr1 }{it:clustervar}{cmd:)} for cluster-robust plug-in residuals variance estimation with degrees-of-freedom weights.{p_end}
+{p 8 12}{cmd:vce(cr2 }{it:clustervar}{cmd:)} for cluster-robust plug-in residuals variance estimation with CR2 leverage weights.{p_end}
+{p 8 12}{cmd:vce(cr3 }{it:clustervar}{cmd:)} for cluster-robust plug-in residuals variance estimation with CR3 leverage weights.{p_end}
 {p 8 12}Default is {cmd:vce(nn 3)}.{p_end}
+
+{p 4 8}{cmd:level(}{it:#}{cmd:)} specifies confidence level for confidence intervals. Default is {cmd:level(95)}.{p_end}
 
 {p 4 8}{cmd:weights(}{it:weightsvar}{cmd:)} is the variable used for optional weighting of the estimation procedure. The unit-specific weights multiply the kernel function.{p_end}
 
@@ -206,6 +217,14 @@ Options are:{p_end}
 {p 4 8}{cmd:bwrestrict(}{it:bwropt}{cmd:)} if set {opt on}, computed bandwidths are restricted to lie within the range of {it:runvar}. Default is {opt on}.{p_end}
 
 {p 4 8}{cmd:stdvars(}{it:stdopt}{cmd:)} if set {opt on}, {it:depvar} and {it:runvar} are standardized before computing the bandwidths. Default is {opt off}.{p_end}
+
+{p 4 8}{cmd:nochecks} skips {cmd:rdrobust} consistency checks before the internal calculations.{p_end}
+
+{p 4 8}{cmd:nowarnings} suppresses {cmd:rdrobust} warnings in the internal call.{p_end}
+
+{p 4 8}{cmd:detail} passes the {cmd:rdrobust} detail option to the internal call.{p_end}
+
+{p 4 8}{cmd:vleverage} passes the {cmd:rdrobust} leverage option to the internal call.{p_end}
 
     {hline}
 	
@@ -293,12 +312,12 @@ Options are:{p_end}
 {title:Authors}
 
 {p 4 8}Matias D. Cattaneo, Princeton University, Princeton, NJ.
-{browse "mailto:cattaneo@princeton.edu":cattaneo@princeton.edu}.{p_end}
+{browse "mailto:matias.d.cattaneo@gmail.com":matias.d.cattaneo@gmail.com}.{p_end}
 
 {p 4 8}Rocio Titiunik, Princeton University, Princeton, NJ.
-{browse "mailto:titiunik@princeton.edu":titiunik@princeton.edu}.{p_end}
+{browse "mailto:rocio.titiunik@gmail.com":rocio.titiunik@gmail.com}.{p_end}
 
 {p 4 8}Gonzalo Vazquez-Bare, UC Santa Barbara, Santa Barbara, CA.
-{browse "mailto:gvazquez@econ.ucsb.edu":gvazquez@econ.ucsb.edu}.{p_end}
+{browse "mailto:gvazquezbare@gmail.com":gvazquezbare@gmail.com}.{p_end}
 
 

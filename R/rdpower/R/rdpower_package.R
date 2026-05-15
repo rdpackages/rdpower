@@ -1,7 +1,7 @@
 ###################################################################
 # rdpower: Power calculations for RD designs
-# !version 2.3 22-May-2025
-# Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
+# !version 3.0 15-May-2026
+# Authors: Matias D. Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ###################################################################
 
 
@@ -17,11 +17,11 @@
 #' useful for analysis of RD designs, visit \url{https://rdpackages.github.io/}.
 #'
 #' @author
-#' Matias Cattaneo, Princeton University. \email{cattaneo@princeton.edu}
+#' Matias D. Cattaneo, Princeton University. \email{matias.d.cattaneo@gmail.com}
 #'
-#' Rocio Titiunik, Princeton University. \email{titiunik@princeton.edu}
+#' Rocio Titiunik, Princeton University. \email{rocio.titiunik@gmail.com}
 #'
-#' Gonzalo Vazquez-Bare, UC Santa Barbara. \email{gvazquez@econ.ucsb.edu}
+#' Gonzalo Vazquez-Bare, UC Santa Barbara. \email{gvazquezbare@gmail.com}
 #'
 #' @references
 #'
@@ -47,3 +47,25 @@
 #'
 #' @aliases rdpower_package
 "_PACKAGE"
+
+
+rdpower.current.vce <- function(vce){
+  if (is.null(vce)) return(vce)
+  vce <- tolower(vce)
+  if (vce %in% c("cluster", "nncluster")){
+    stop("vce='cluster' and vce='nncluster' are no longer RDROBUST R/Python options. Use cluster=... with vce='cr1', 'cr2', or 'cr3'.", call. = FALSE)
+  }
+  vce
+}
+
+
+rdpower.subset.sample <- function(Y, R, cluster = NULL, subset = NULL){
+  if (is.null(subset)){
+    return(list(Y = Y, R = R, cluster = cluster))
+  }
+
+  cluster.subset <- NULL
+  if (!is.null(cluster)) cluster.subset <- cluster[subset]
+
+  list(Y = Y[subset], R = R[subset], cluster = cluster.subset)
+}

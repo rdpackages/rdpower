@@ -1,10 +1,10 @@
 ********************************************************************************
 * RDSAMPSI: sample size calculation for Regression Discontinuity Designs
-* Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
+* Authors: Matias D. Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ********************************************************************************
-*!version 2.2 22-May-2025
+*!version 3.0 15-May-2026
 
-version 13
+version 16.0
 
 capture program drop rdsampsi
 program define rdsampsi, rclass
@@ -15,7 +15,7 @@ program define rdsampsi, rclass
 											 covs(string) covs_drop(string) deriv(real 0) p(real 1) q(numlist max=1) h(string) b(string) rho(real 0) ///
 											 kernel(string) bwselect(string) vce(string) weights(string) ///
 											 scalepar(real 1) scaleregul(real 1) fuzzy(string) level(real 95) ///
-											 masspoints(string) bwcheck(real 0) bwrestrict(string) stdvars]
+											 masspoints(string) bwcheck(real 0) bwrestrict(string) stdvars(string) nochecks nowarnings detail vleverage]
 
 											  
 	****************************************************************************
@@ -176,13 +176,21 @@ program define rdsampsi, rclass
 		local bwselect_opt "bwselect(`bwselect')"
 	}
 	
+	local cluster_vce = 0
 	if "`vce'" != ""{
 		local vce_opt "vce(`vce')"
 		local vce1 "`vce'"
 		tokenize `vce1'
-		local clust_opt `1'
+		local clust_opt = lower("`1'")
 		local clustvar `2'
-
+		local vce_words : word count `vce1'
+		if "`clust_opt'" == "nncluster" {
+			di as error "vce(nncluster ...) is no longer supported by rdrobust. Use vce(cr1 clustervar) or vce(cluster clustervar)."
+			exit 198
+		}
+		if `vce_words' >= 2 & inlist("`clust_opt'","cluster","cr1","cr2","cr3","hc0","hc1","hc2","hc3") {
+			local cluster_vce = 1
+		}
 	}
 	
 	if "`fuzzy'" != ""{
@@ -217,6 +225,26 @@ program define rdsampsi, rclass
 	if "`bwrestrict'" != ""{
 		local bwrestrict_opt "bwrestrict(`bwrestrict')"
 	}
+
+	if "`stdvars'" != ""{
+		local stdvars_opt "stdvars(`stdvars')"
+	}
+
+	if "`nochecks'" != ""{
+		local nochecks_opt "nochecks"
+	}
+
+	if "`nowarnings'" != ""{
+		local nowarnings_opt "nowarnings"
+	}
+
+	if "`detail'" != ""{
+		local detail_opt "detail"
+	}
+
+	if "`vleverage'" != ""{
+		local vleverage_opt "vleverage"
+	}
 	
 	if "`weights'" != ""{
 		local weights_opt "weights(`weights')"
@@ -236,7 +264,8 @@ program define rdsampsi, rclass
 												`kernel_opt' `bwselect_opt' `vce_opt' 	 ///
 												scalepar(`scalepar') scaleregul(`scaleregul') ///
 												`fuzzy_opt' level(`level') `covs_drop_opt' ///
-												 `masspoints_opt' `bwcheck_opt' `bwrestrict_opt' `stdvars' `weights_opt'
+												 `masspoints_opt' `bwcheck_opt' `bwrestrict_opt' `stdvars_opt' ///
+												 `nochecks_opt' `nowarnings_opt' `detail_opt' `vleverage_opt' `weights_opt'
 												 
 			local hl = e(h_l)
 			local hr = e(h_r)
@@ -252,7 +281,7 @@ program define rdsampsi, rclass
 				mat VL_CL = e(V_cl_l)
 				mat VR_CL = e(V_cl_r)
 				
-				if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster"{
+				if `cluster_vce' {
 					qui tab `clustvar' if `x'!=. & `y'!=. & `touse'
 					local N = r(r)
 				}
@@ -336,7 +365,7 @@ program define rdsampsi, rclass
 	}
 
 	if `nodata' == 0 {
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster"{
+		if `cluster_vce' {
 		
 			qui tab `clustvar' if `x'!=. & `y'!=. & `touse'
 			local N = r(r)
@@ -410,7 +439,7 @@ program define rdsampsi, rclass
 		qui count if `x'<`c'&`x'>=`c'-`hl'  & `x'!=. & `y'!=. & `touse'
 		local n_hnew_l_disp = r(N)	
 		
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster"{
+		if `cluster_vce' {
 			qui tab `clustvar' if `x'>=`c' & `x'!=. & `y'!=. & `touse'
 			local gplus = r(r)
 			
@@ -445,7 +474,7 @@ program define rdsampsi, rclass
 		
 		* Left panel
 		
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster"{
+		if `cluster_vce' {
 			local gplus = .
 			local gminus = .
 		}
@@ -489,7 +518,7 @@ program define rdsampsi, rclass
 	disp as text "{ralign 21:Order loc. poly. (p)}"	_col(22) " {c |} " _col(23) as result %9.0f `p'     	    _col(37) %9.0f  `p'					      _col(54) as text "HA:       tau = "  in yellow %10.3f `tau'
 	
 	
-	if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster" {
+	if `cluster_vce' {
 		disp as text "{ralign 21:Number of clusters}"        _col(22) " {c |} " _col(23) as result %9.0f `gminus'        _col(37) %9.0f  `gplus'         _col(54) as text "Power         = "  in yellow %10.3f `beta'
 		if "`all'" != ""{
 			disp as text "{ralign 21:Eff. Num. of clusters}"   _col(22) " {c |} " _col(23) as result %9.0f `gminus_h_l'      _col(37) %9.0f  `gplus_h_r' _col(54) as text "Size dist.    = "  in yellow %10.3f `size_dist' 
@@ -521,7 +550,7 @@ program define rdsampsi, rclass
 	}
 	
 	di as text "{hline 22}{c TT}{hline 56}"
-	if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster" {
+	if `cluster_vce' {
 		di as text  				_col(22) " {c |}"	  _col(30) "Number of clusters in window"										_col(70) "Proportion"
 	}
 	else {
@@ -537,7 +566,7 @@ program define rdsampsi, rclass
 	}
 	di as text "{hline 22}{c BT}{hline 56}"
 
-	if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster" {
+	if `cluster_vce' {
 			disp as text "Standard errors clustered by " as res "`clustvar'" as text "."
 	}
 	

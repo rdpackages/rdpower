@@ -1,10 +1,10 @@
 ********************************************************************************
 * RDMDE: minimum detectable effect calculation for Regression Discontinuity Designs
-* Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
+* Authors: Matias D. Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ********************************************************************************
-*!version 2.2 22-May-2025
+*!version 3.0 15-May-2026
 
-version 13
+version 16.0
 
 capture program drop rdmde
 program define rdmde, rclass
@@ -14,7 +14,7 @@ program define rdmde, rclass
 											 covs(string) covs_drop(string) deriv(real 0) p(real 1) q(numlist max=1) h(string) b(string) rho(real 0) ///
 											 kernel(string) bwselect(string) vce(string) weights(string) ///
 											 scalepar(real 1) scaleregul(real 1) fuzzy(string) level(real 95) ///
-											 masspoints(string) bwcheck(real 0) bwrestrict(string) stdvars]
+											 masspoints(string) bwcheck(real 0) bwrestrict(string) stdvars(string) nochecks nowarnings detail vleverage]
 
 											  
 	****************************************************************************
@@ -201,13 +201,21 @@ program define rdmde, rclass
 		local bwselect_opt "bwselect(`bwselect')"
 	}
 	
+	local cluster_vce = 0
 	if "`vce'" != ""{
 		local vce_opt "vce(`vce')"
 		local vce1 "`vce'"
 		tokenize `vce1'
-		local clust_opt `1'
+		local clust_opt = lower("`1'")
 		local clustvar `2'
-
+		local vce_words : word count `vce1'
+		if "`clust_opt'" == "nncluster" {
+			di as error "vce(nncluster ...) is no longer supported by rdrobust. Use vce(cr1 clustervar) or vce(cluster clustervar)."
+			exit 198
+		}
+		if `vce_words' >= 2 & inlist("`clust_opt'","cluster","cr1","cr2","cr3","hc0","hc1","hc2","hc3") {
+			local cluster_vce = 1
+		}
 	}
 	
 	if "`fuzzy'" != ""{
@@ -242,6 +250,26 @@ program define rdmde, rclass
 	if "`bwrestrict'" != ""{
 		local bwrestrict_opt "bwrestrict(`bwrestrict')"
 	}
+
+	if "`stdvars'" != ""{
+		local stdvars_opt "stdvars(`stdvars')"
+	}
+
+	if "`nochecks'" != ""{
+		local nochecks_opt "nochecks"
+	}
+
+	if "`nowarnings'" != ""{
+		local nowarnings_opt "nowarnings"
+	}
+
+	if "`detail'" != ""{
+		local detail_opt "detail"
+	}
+
+	if "`vleverage'" != ""{
+		local vleverage_opt "vleverage"
+	}
 	
 	if "`weights'" != ""{
 		local weights_opt "weights(`weights')"
@@ -259,7 +287,8 @@ program define rdmde, rclass
 				`kernel_opt' `bwselect_opt' `vce_opt' 	 ///
 				scalepar(`scalepar') scaleregul(`scaleregul') ///
 				level(`level') `fuzzy_opt' `covs_drop_opt' ///
-				`masspoints_opt' `bwcheck_opt' `bwrestrict_opt' `stdvars' `weights_opt'
+				`masspoints_opt' `bwcheck_opt' `bwrestrict_opt' `stdvars_opt' ///
+				`nochecks_opt' `nowarnings_opt' `detail_opt' `vleverage_opt' `weights_opt'
 
 			local hl = e(h_l)
 			local hr = e(h_r)
@@ -275,7 +304,7 @@ program define rdmde, rclass
 				mat VL_RB = e(V_rb_l)
 				mat VR_RB = e(V_rb_r)
 
-				if "`clust_opt'" == "cluster" | "`clust_opt'" == "nncluster"{
+				if `cluster_vce' {
 					qui tab `clustvar' if `x'!=. & `y'!=. & `touse'
 					local N = r(r)
 				}
@@ -304,7 +333,7 @@ program define rdmde, rclass
 
 		** Calculate sample sizes
 
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster"{
+		if `cluster_vce' {
 
 			qui tab `clustvar' if `x'!=. & `y'!=. & `touse'
 			local N = r(r)
@@ -441,7 +470,7 @@ program define rdmde, rclass
 		qui count if `x'<`c'&`x'>=`c'-`hl'  & `x'!=. & `y'!=. & `touse'
 		local n_h_l_disp = r(N)
 		
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster"{
+		if `cluster_vce' {
 			qui tab `clustvar' if `x'>=`c' & `x'!=. & `y'!=. & `touse'
 			local gplus = r(r)
 			
@@ -481,7 +510,7 @@ program define rdmde, rclass
 		
 		* Left panel
 		
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster"{
+		if `cluster_vce' {
 			local gplus = `nplus'
 			local gminus = `nminus'
 		}
@@ -516,14 +545,14 @@ program define rdmde, rclass
 		disp as text "{ralign 21:Eff. Number of obs}"   _col(22) " {c |} " _col(23) as result %9.0f `n_h_l_disp'      	 _col(37) %9.0f  `n_h_r_disp'         _col(54) as text "VCE method    = "  in yellow "{ralign 10:`vce_type'}" 
 		disp as text "{ralign 21:BW loc. poly. (h)}"	_col(22) " {c |} " _col(23) as result %9.3f `hl'     	    	 _col(37) %9.3f  `hr'				  _col(54) as text "Derivative    = "  in yellow %10.0f `deriv'
 		disp as text "{ralign 21:Order loc. poly. (p)}"	_col(22) " {c |} " _col(23) as result %9.0f `p'     	    	 _col(37) %9.0f  `p'				 
-		if "`clust_opt'" == "cluster" | "`clust_opt'" == "nncluster"{			
+		if `cluster_vce' {
 			disp as text "{ralign 21:Number of clusters}"        _col(22) " {c |} " _col(23) as result %9.0f `gminus'        _col(37) %9.0f  `gplus'
 			disp as text "{ralign 21:Eff. Num. of clusters}"   _col(22) " {c |} " _col(23) as result %9.0f `gminus_h_l'      	 _col(37) %9.0f  `gplus_h_r'
 		}
 		disp as text "{hline 22}{c +}{hline 22}"
 	
 		disp as text "{ralign 21:Sampling BW}"		    _col(22) " {c |} " _col(23) as result %9.3f `hnew_l'    	_col(37) %9.3f  `hnew_r'				  	  
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster" {
+		if `cluster_vce' {
 			disp as text "{ralign 21:New cluster sample}" _col(22) " {c |} " _col(23) as result %9.0f `ntilde_l'  	_col(37) %9.0f  `ntilde_r'
 		}
 		else{
@@ -551,7 +580,7 @@ program define rdmde, rclass
 		}
 		di as text "{hline 22}{c BT}{hline 56}"
 		
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster" {
+		if `cluster_vce' {
 			disp as text "Standard errors clustered by " as res "`clustvar'" as text "."
 		}
 	

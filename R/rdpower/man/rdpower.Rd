@@ -29,15 +29,19 @@ rdpower(
   bwselect = "mserd",
   vce = "nn",
   cluster = NULL,
+  nnmatch = 3,
   scalepar = 1,
   scaleregul = 1,
+  sharpbw = FALSE,
   fuzzy = NULL,
   level = 95,
   weights = NULL,
   masspoints = "adjust",
   bwcheck = NULL,
   bwrestrict = TRUE,
-  stdvars = FALSE
+  stdvars = FALSE,
+  subset = NULL,
+  ginv.tol = 1e-20
 )
 }
 \arguments{
@@ -85,13 +89,17 @@ rdpower(
 
 \item{bwselect}{option for \code{rdrobust()}: specifies the bandwidth selection procedure to be used.}
 
-\item{vce}{option for \code{rdrobust()}: specifies the procedure used to compute the variance-covariance matrix estimator.}
+\item{vce}{option for \code{rdrobust()}: specifies the variance-covariance estimator. Current options are \code{nn}, \code{hc0}, \code{hc1}, \code{hc2}, \code{hc3}, and, with \code{cluster} specified, \code{cr1}, \code{cr2}, and \code{cr3}.}
 
-\item{cluster}{option for \code{rdrobust()}: indicates the cluster ID variable used for the cluster-robust variance estimation with degrees-of-freedom weights.}
+\item{cluster}{option for \code{rdrobust()}: indicates the cluster ID variable used for cluster-robust variance estimation.}
+
+\item{nnmatch}{option for \code{rdrobust()}: minimum number of neighbors for \code{vce=nn}. Default is \code{nnmatch=3}.}
 
 \item{scalepar}{option for \code{rdrobust()}: specifies scaling factor for RD parameter of interest.}
 
 \item{scaleregul}{option for \code{rdrobust()}: specifies scaling factor for the regularization terms of bandwidth selectors.}
+
+\item{sharpbw}{option for \code{rdrobust()}: if \code{TRUE}, fuzzy RD estimation uses bandwidth selection for the sharp RD model.}
 
 \item{fuzzy}{option for \code{rdrobust()}: specifies the treatment status variable used to implement fuzzy RD estimation.}
 
@@ -105,7 +113,11 @@ rdpower(
 
 \item{bwrestrict}{option for \code{rdrobust()}: if TRUE, computed bandwidths are restricted to lie withing the range of \code{x}. Default is \code{bwrestrict=TRUE}.}
 
-\item{stdvars}{option for \code{rdrobust()}: if \code{TRUE}, \code{x} and \code{y} are standardized before computing the bandwidths. Default is \code{stdvars=TRUE}.}
+\item{stdvars}{option for \code{rdrobust()}: if \code{TRUE}, \code{x} and \code{y} are standardized before computing the bandwidths. Default is \code{stdvars=FALSE}.}
+
+\item{subset}{option for \code{rdrobust()}: optional vector specifying a subset of observations to use.}
+
+\item{ginv.tol}{option for \code{rdrobust()}: tolerance used to invert matrices involving covariates when \code{covs_drop=TRUE}.}
 }
 \value{
 \item{power.rbc}{power against tau using robust bias corrected standard error}
@@ -144,9 +156,9 @@ tmp <- rdpower(data=cbind(Y,R),tau=1,covs=X)
 Cattaneo, M. D., R. Titiunik and G. Vazquez-Bare. (2019). \href{https://rdpackages.github.io/references/Cattaneo-Titiunik-VazquezBare_2019_Stata.pdf}{Power Calculations for Regression Discontinuity Designs}. \emph{Stata Journal}, 19(1): 210-245.
 }
 \author{
-Matias Cattaneo, Princeton University. \email{cattaneo@princeton.edu}
+Matias D. Cattaneo, Princeton University. \email{matias.d.cattaneo@gmail.com}
 
-Rocio Titiunik, Princeton University. \email{titiunik@princeton.edu}
+Rocio Titiunik, Princeton University. \email{rocio.titiunik@gmail.com}
 
-Gonzalo Vazquez-Bare, UC Santa Barbara. \email{gvazquez@econ.ucsb.edu}
+Gonzalo Vazquez-Bare, UC Santa Barbara. \email{gvazquezbare@gmail.com}
 }

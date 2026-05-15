@@ -1,10 +1,10 @@
 ********************************************************************************
 * RDPOW: power calculation for Regression Discontinuity Designs
-* Authors: Matias Cattaneo, Rocío Titiunik, Gonzalo Vazquez-Bare
+* Authors: Matias D. Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ********************************************************************************
-*!version 2.2 22-May-2025
+*!version 3.0 15-May-2026
 
-version 13
+version 16.0
 
 capture program drop rdpow
 program define rdpow, rclass
@@ -15,7 +15,7 @@ program define rdpow, rclass
 											  covs(string) covs_drop(string) deriv(real 0) p(real 1) q(numlist max=1) h(string) b(string) rho(real 0) ///
 											  kernel(string) bwselect(string) vce(string) weights(string) ///
 											  scalepar(real 1) scaleregul(real 1) fuzzy(string) level(real 95) ///
-											  masspoints(string) bwcheck(real 0) bwrestrict(string) stdvars]
+											  masspoints(string) bwcheck(real 0) bwrestrict(string) stdvars(string) nochecks nowarnings detail vleverage]
 
 
 	****************************************************************************
@@ -204,12 +204,21 @@ program define rdpow, rclass
 		local bwselect_opt "bwselect(`bwselect')"
 	}
 	
+	local cluster_vce = 0
 	if "`vce'" != ""{
 		local vce_opt "vce(`vce')"
 		local vce1 "`vce'"
 		tokenize `vce1'
-		local clust_opt `1'
+		local clust_opt = lower("`1'")
 		local clustvar `2'
+		local vce_words : word count `vce1'
+		if "`clust_opt'" == "nncluster" {
+			di as error "vce(nncluster ...) is no longer supported by rdrobust. Use vce(cr1 clustervar) or vce(cluster clustervar)."
+			exit 198
+		}
+		if `vce_words' >= 2 & inlist("`clust_opt'","cluster","cr1","cr2","cr3","hc0","hc1","hc2","hc3") {
+			local cluster_vce = 1
+		}
 	}
 	
 	if "`fuzzy'" != ""{
@@ -246,6 +255,26 @@ program define rdpow, rclass
 	if "`bwrestrict'" != ""{
 		local bwrestrict_opt "bwrestrict(`bwrestrict')"
 	}
+
+	if "`stdvars'" != ""{
+		local stdvars_opt "stdvars(`stdvars')"
+	}
+
+	if "`nochecks'" != ""{
+		local nochecks_opt "nochecks"
+	}
+
+	if "`nowarnings'" != ""{
+		local nowarnings_opt "nowarnings"
+	}
+
+	if "`detail'" != ""{
+		local detail_opt "detail"
+	}
+
+	if "`vleverage'" != ""{
+		local vleverage_opt "vleverage"
+	}
 	
 	if "`weights'" != ""{
 		local weights_opt "weights(`weights')"
@@ -263,7 +292,8 @@ program define rdpow, rclass
 												 `kernel_opt' `bwselect_opt' `vce_opt' 	 ///
 												 scalepar(`scalepar') scaleregul(`scaleregul') ///
 												 level(`level') `fuzzy_opt' `covs_drop_opt' ///
-												 `masspoints_opt' `bwcheck_opt' `bwrestrict_opt' `stdvars' `weights_opt'
+												 `masspoints_opt' `bwcheck_opt' `bwrestrict_opt' `stdvars_opt' ///
+												 `nochecks_opt' `nowarnings_opt' `detail_opt' `vleverage_opt' `weights_opt'
 	
 			local hl = e(h_l)
 			local hr = e(h_r)
@@ -279,7 +309,7 @@ program define rdpow, rclass
 				mat VL_RB = e(V_rb_l)
 				mat VR_RB = e(V_rb_r)
 				
-				if "`clust_opt'" == "cluster" | "`clust_opt'" == "nncluster"{
+				if `cluster_vce' {
 					qui tab `clustvar' if `x'!=. & `y'!=. & `touse'
 					local N = r(r)
 				}
@@ -318,7 +348,7 @@ program define rdpow, rclass
 		** Calculate sample sizes
 		
 		
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster"{
+		if `cluster_vce' {
 		
 			qui tab `clustvar' if `x'!=. & `y'!=. & `touse'
 			local N = r(r)
@@ -385,26 +415,27 @@ program define rdpow, rclass
 	** Bias adjustment 
 			
 	local bias = `bias_r'*`hnew_r'^(1+`p'-`deriv') + `bias_l'*`hnew_l'^(1+`p'-`deriv')
+	local z = invnormal(1-`alpha'/2)
 	
 	
 	
 	****************************************************************************
 	** Power calculation
 						
-	local power_rbc = 1 - normal((`tau')/`se_rbc'+invnormal(1-`alpha'/2)) ///
-							+ normal((`tau')/`se_rbc'-invnormal(1-`alpha'/2))
+	local power_rbc = 1 - normal((`tau')/`se_rbc'+`z') ///
+							+ normal((`tau')/`se_rbc'-`z')
 
-	local power_conv = 1 - normal((`tau'+`bias')/`se_conv'+invnormal(1-`alpha'/2)) ///
-							+ normal((`tau'+`bias')/`se_conv'-invnormal(1-`alpha'/2))
+	local power_conv = 1 - normal((`tau'+`bias')/`se_conv'+`z') ///
+							+ normal((`tau'+`bias')/`se_conv'-`z')
 	
 	foreach r of numlist 0 2 5 8 {
 		local r1 = `r'/10
 		local te = `r1'*`tau'
-		local power_conv`r' = 1 - normal((`te'+`bias')/`se_conv'+invnormal(1-`alpha'/2)) ///
-							+ normal((`te'+`bias')/`se_conv'-invnormal(1-`alpha'/2))
+		local power_conv`r' = 1 - normal((`te'+`bias')/`se_conv'+`z') ///
+							+ normal((`te'+`bias')/`se_conv'-`z')
 							
-		local power_rbc`r' = 1 - normal(`te'/`se_rbc'+invnormal(1-`alpha'/2)) ///
-							+ normal(`te'/`se_rbc'-invnormal(1-`alpha'/2))
+		local power_rbc`r' = 1 - normal(`te'/`se_rbc'+`z') ///
+							+ normal(`te'/`se_rbc'-`z')
 	}
 
 
@@ -433,7 +464,7 @@ program define rdpow, rclass
 		qui count if `x'<`c'&`x'>=`c'-`hl'  & `x'!=. & `y'!=. & `touse'
 		local n_h_l_disp = r(N)
 		
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster"{
+		if `cluster_vce' {
 			
 			qui tab `clustvar' if `x'>=`c' & `x'!=. & `y'!=. & `touse'
 			local gplus = r(r)
@@ -474,7 +505,7 @@ program define rdpow, rclass
 		
 		* Left panel
 		
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster"{
+		if `cluster_vce' {
 			local gplus = `nplus'
 			local gminus = `nminus'
 		}
@@ -509,7 +540,7 @@ program define rdpow, rclass
 		disp as text "{ralign 21:Eff. Number of obs}"   _col(22) " {c |} " _col(23) as result %9.0f `n_h_l_disp'      	 _col(37) %9.0f  `n_h_r_disp'         _col(54) as text "VCE method    = "  in yellow "{ralign 10:`vce_type'}" 
 		disp as text "{ralign 21:BW loc. poly. (h)}"	_col(22) " {c |} " _col(23) as result %9.3f `hl'     	    	 _col(37) %9.3f  `hr'				  _col(54) as text "Derivative    = "  in yellow %10.0f `deriv'
 		disp as text "{ralign 21:Order loc. poly. (p)}"	_col(22) " {c |} " _col(23) as result %9.0f `p'     	    	 _col(37) %9.0f  `p'				  _col(54) as text "HA:       tau = "  in yellow %10.3f `tau'
-		if "`clust_opt'" == "cluster" | "`clust_opt'" == "nncluster"{			
+		if `cluster_vce' {
 			if "`all'" != ""{
 				disp as text "{ralign 21:Number of clusters}"        _col(22) " {c |} " _col(23) as result %9.0f `gminus'        _col(37) %9.0f  `gplus'      _col(54) as text "Size dist     = "  in yellow %10.4f `power_conv0'-`alpha'
 				disp as text "{ralign 21:Eff. Num. of clusters}"   _col(22) " {c |} " _col(23) as result %9.0f `gminus_h_l'      	 _col(37) %9.0f  `gplus_h_r'				
@@ -532,7 +563,7 @@ program define rdpow, rclass
 		disp as text "{ralign 21:Sampling BW}"		    _col(22) " {c |} " _col(23) as result %9.3f `hnew_l'    	_col(37) %9.3f  `hnew_r'				  	  
 		
 		
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster" {
+		if `cluster_vce' {
 			disp as text "{ralign 21:New cluster sample}" _col(22) " {c |} " _col(23) as result %9.0f `ntilde_l'  	_col(37) %9.0f  `ntilde_r'
 		}
 		else{
@@ -560,7 +591,7 @@ program define rdpow, rclass
 		}
 		di as text "{hline 22}{c BT}{hline 56}"
 		
-		if "`clust_opt'"=="cluster" | "`clust_opt'"=="nncluster" {
+		if `cluster_vce' {
 			disp as text "Standard errors clustered by " as res "`clustvar'" as text "."
 		}
 		
@@ -589,11 +620,11 @@ program define rdpow, rclass
 		if "`graph_options'" == "" {
 		
 			if "`all'" != ""{
-				twoway (function y = 1 - normal(x/`se_rbc'+invnormal(1-`alpha'/2)) ///
-									 + normal(x/`se_rbc'-invnormal(1-`alpha'/2)), ///
+				twoway (function y = 1 - normal(x/`se_rbc'+`z') ///
+									 + normal(x/`se_rbc'-`z'), ///
 							range(`left' `right')) ///				   
-						(function y = 1 - normal((x+`bias')/`se_conv'+invnormal(1-`alpha'/2)) ///
-									 + normal((x+`bias')/`se_conv'-invnormal(1-`alpha'/2)), ///
+						(function y = 1 - normal((x+`bias')/`se_conv'+`z') ///
+									 + normal((x+`bias')/`se_conv'-`z'), ///
 							range(`left' `right')), ///
 				   xline(`tau', lpattern(shortdash) lwidth(thin)) ///
 				   xline(0, lpattern(solid) lwidth(thin) lcolor(gray)) ///
@@ -604,8 +635,8 @@ program define rdpow, rclass
 				   note("Power function for N_l = `n_hnew_l', N_r = `n_hnew_r', alpha = `alpha' (horizontal black dashed line).")
 			}
 			else {
-				twoway (function y = 1 - normal(x/`se_rbc'+invnormal(1-`alpha'/2)) ///
-									 + normal(x/`se_rbc'-invnormal(1-`alpha'/2)), ///
+				twoway (function y = 1 - normal(x/`se_rbc'+`z') ///
+									 + normal(x/`se_rbc'-`z'), ///
 							range(`left' `right')), ///
 				   xline(`tau', lpattern(shortdash) lwidth(thin)) ///
 				   xline(0, lpattern(solid) lwidth(thin) lcolor(gray)) ///
@@ -618,18 +649,18 @@ program define rdpow, rclass
 		}
 		else {
 			if "`all'" != "" {
-				twoway (function y = 1 - normal(x/`se_rbc'+invnormal(1-`alpha'/2)) ///
-									 + normal(x/`se_rbc'-invnormal(1-`alpha'/2)), ///
+				twoway (function y = 1 - normal(x/`se_rbc'+`z') ///
+									 + normal(x/`se_rbc'-`z'), ///
 							range(`left' `right')) ///					   
-						(function y = 1 - normal((x+`bias')/`se_conv'+invnormal(1-`alpha'/2)) ///
-									 + normal((x+`bias')/`se_conv'-invnormal(1-`alpha'/2)), ///
+						(function y = 1 - normal((x+`bias')/`se_conv'+`z') ///
+									 + normal((x+`bias')/`se_conv'-`z'), ///
 							range(`left' `right')), ///
 				    legend(label(1 "robust bias corrected") label(2 "conventional"))	///
 					xlabel(`left'(`step')`right') `graph_options'
 			}
 			else {
-				twoway (function y = 1 - normal(x/`se_rbc'+invnormal(1-`alpha'/2)) ///
-									 + normal(x/`se_rbc'-invnormal(1-`alpha'/2)), ///
+				twoway (function y = 1 - normal(x/`se_rbc'+`z') ///
+									 + normal(x/`se_rbc'-`z'), ///
 							range(`left' `right')), ///
 				    legend(label(1 "robust bias corrected"))	///
 					xlabel(`left'(`step')`right') `graph_options'

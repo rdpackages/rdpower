@@ -1,0 +1,7 @@
+^doc$
+^Meta$
+^data-raw$
+^figure$
+Rplots\.pdf$
+^.*\.Rcheck$
+^rdpower\.Rproj$

@@ -1,20 +1,26 @@
 Package: rdpower
 Type: Package
-Title: Power Calculations for RD Designs
-Version: 2.3
+Title: Power, Sample Size, and Minimum Detectable Effect Calculations for RD Designs
+Version: 3.0
+Date: 2026-05-15
 Authors@R: c(person(given = c("Matias", "D."),
                       family = "Cattaneo",
-                      role = "aut"),
+                      role = c("aut", "cre"),
+                      email = "matias.d.cattaneo@gmail.com"),
                person(given = "Rocio",
                       family = "Titiunik",
-                      role = "aut"),
+                      role = "aut",
+                      email = "rocio.titiunik@gmail.com"),
                person(given = "Gonzalo",
                       family = "Vazquez-Bare",
-                      role = c("aut", "cre"),
-                      email = "gvazquez@econ.ucsb.edu"))
-Description: The regression discontinuity (RD) design is a popular quasi-experimental design for causal inference and policy evaluation. The 'rdpower' package provides tools to perform power, sample size and MDE calculations in RD designs: rdpower() calculates the power of an RD design, rdsampsi() calculates the required sample size to achieve a desired power and rdmde() calculates minimum detectable effects. See Cattaneo, Titiunik and Vazquez-Bare (2019) <https://rdpackages.github.io/references/Cattaneo-Titiunik-VazquezBare_2019_Stata.pdf> for further methodological details.
-Imports: 
-    rdrobust
-License: GPL-2
+                      role = "aut",
+                      email = "gvazquezbare@gmail.com"))
+Description: The regression discontinuity (RD) design is a popular quasi-experimental design for causal inference and policy evaluation. The 'rdpower' package provides tools to perform power, sample size, and minimum detectable effect calculations in RD designs: rdpower() calculates the power of an RD design, rdsampsi() calculates the required sample size to achieve a desired power, and rdmde() calculates minimum detectable effects. See Cattaneo, Titiunik and Vazquez-Bare (2019) <https://rdpackages.github.io/references/Cattaneo-Titiunik-VazquezBare_2019_Stata.pdf> for further methodological details.
 Encoding: UTF-8
+Depends: R (>= 3.6.0)
+License: GPL-3
+URL: https://github.com/rdpackages/rdpower
+BugReports: https://github.com/rdpackages/rdpower/issues
+Imports:
+    rdrobust (>= 4.0.0)
 RoxygenNote: 7.3.2

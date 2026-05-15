@@ -1,7 +1,7 @@
 ###################################################################
 # rdmde: minimum detectable effect calculations for RD designs
-# !version 2.3 22-May-2025
-# Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
+# !version 3.0 15-May-2026
+# Authors: Matias D. Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ###################################################################
 
 #' MDE Calculations for RD Designs
@@ -10,11 +10,11 @@
 #'
 #'
 #' @author
-#' Matias Cattaneo, Princeton University. \email{cattaneo@princeton.edu}
+#' Matias D. Cattaneo, Princeton University. \email{matias.d.cattaneo@gmail.com}
 #'
-#' Rocio Titiunik, Princeton University. \email{titiunik@princeton.edu}
+#' Rocio Titiunik, Princeton University. \email{rocio.titiunik@gmail.com}
 #'
-#' Gonzalo Vazquez-Bare, UC Santa Barbara. \email{gvazquez@econ.ucsb.edu}
+#' Gonzalo Vazquez-Bare, UC Santa Barbara. \email{gvazquezbare@gmail.com}
 #'
 #' @references
 #'
@@ -42,17 +42,21 @@
 #' @param rho option for \code{rdrobust()}: specifies the value of \code{rho} so that the bias bandwidth \code{b} equals \code{b=h/rho}.
 #' @param kernel option for \code{rdrobust()}: kernel function used to construct the local-polynomial estimators.
 #' @param bwselect option for \code{rdrobust()}: specifies the bandwidth selection procedure to be used.
-#' @param vce option for \code{rdrobust()}: specifies the procedure used to compute the variance-covariance matrix estimator.
-#' @param cluster option for \code{rdrobust()}: indicates the cluster ID variable used for the cluster-robust variance estimation with degrees-of-freedom weights.
+#' @param vce option for \code{rdrobust()}: specifies the variance-covariance estimator. Current options are \code{nn}, \code{hc0}, \code{hc1}, \code{hc2}, \code{hc3}, and, with \code{cluster} specified, \code{cr1}, \code{cr2}, and \code{cr3}.
+#' @param cluster option for \code{rdrobust()}: indicates the cluster ID variable used for cluster-robust variance estimation.
+#' @param nnmatch option for \code{rdrobust()}: minimum number of neighbors for \code{vce=nn}. Default is \code{nnmatch=3}.
 #' @param scalepar option for \code{rdrobust()}: specifies scaling factor for RD parameter of interest.
 #' @param scaleregul option for \code{rdrobust()}: specifies scaling factor for the regularization terms of bandwidth selectors.
+#' @param sharpbw option for \code{rdrobust()}: if \code{TRUE}, fuzzy RD estimation uses bandwidth selection for the sharp RD model.
 #' @param fuzzy option for \code{rdrobust()}: specifies the treatment status variable used to implement fuzzy RD estimation.
 #' @param level option for \code{rdrobust()}: sets the confidence level for confidence intervals.
 #' @param weights option for \code{rdrobust()}: is the variable used for optional weighting of the estimation procedure. The unit-specific weights multiply the kernel function.
 #' @param masspoints option for \code{rdrobust()}: checks and controls for repeated observations in tue running variable.
 #' @param bwcheck option for \code{rdrobust()}: if a positive integer is provided, the preliminary bandwidth used in the calculations is enlarged so that at least \code{bwcheck} unique observations are used.
 #' @param bwrestrict option for \code{rdrobust()}: if TRUE, computed bandwidths are restricted to lie withing the range of \code{x}. Default is \code{bwrestrict=TRUE}.
-#' @param stdvars option for \code{rdrobust()}: if \code{TRUE}, \code{x} and \code{y} are standardized before computing the bandwidths. Default is \code{stdvars=TRUE}.
+#' @param stdvars option for \code{rdrobust()}: if \code{TRUE}, \code{x} and \code{y} are standardized before computing the bandwidths. Default is \code{stdvars=FALSE}.
+#' @param subset option for \code{rdrobust()}: optional vector specifying a subset of observations to use.
+#' @param ginv.tol option for \code{rdrobust()}: tolerance used to invert matrices involving covariates when \code{covs_drop=TRUE}.
 #'
 #' @return
 #' \item{mde}{MDE using robust bias corrected standard error}
@@ -107,15 +111,19 @@ rdmde <- function(data = NULL,
                   bwselect = 'mserd',
                   vce = 'nn',
                   cluster = NULL,
+                  nnmatch = 3,
                   scalepar = 1,
                   scaleregul = 1,
+                  sharpbw = FALSE,
                   fuzzy = NULL,
                   level = 95,
                   weights = NULL,
                   masspoints = 'adjust',
                   bwcheck = NULL,
                   bwrestrict = TRUE,
-                  stdvars = FALSE){
+                  stdvars = FALSE,
+                  subset = NULL,
+                  ginv.tol = 1e-20){
 
   #################################################################
   # Options, default values and error checking
@@ -127,6 +135,13 @@ rdmde <- function(data = NULL,
     else{
       Y <- data[,1]
       R <- data[,2]
+      Y.rd <- Y
+      R.rd <- R
+      cluster.rd <- cluster
+      sample <- rdpower.subset.sample(Y, R, cluster, subset)
+      Y <- sample$Y
+      R <- sample$R
+      cluster <- sample$cluster
     }
   }
 
@@ -193,6 +208,7 @@ rdmde <- function(data = NULL,
   }
 
   if (is.null(q)){ q <- p + 1}
+  vce <- rdpower.current.vce(vce)
 
 
   #################################################################
@@ -202,9 +218,11 @@ rdmde <- function(data = NULL,
   if (!is.null(data)){
 
     if (is.null(bias) | is.null(variance)){
-      aux <- rdrobust::rdrobust(Y,R,c=cutoff,all=TRUE,covs=covs,covs_drop=covs_drop,deriv=deriv,p=p,q=q,h=h,b=b,rho=rho,cluster=cluster,
-                     kernel=kernel,bwselect=bwselect,vce=vce,scalepar=scalepar,scaleregul=scaleregul,
-                     fuzzy=fuzzy,level=level,weights=weights,masspoints=masspoints,bwcheck=bwcheck,bwrestrict=bwrestrict,stdvars=stdvars)
+      aux <- rdrobust::rdrobust(Y.rd,R.rd,c=cutoff,covs=covs,covs_drop=covs_drop,ginv.tol=ginv.tol,
+                     deriv=deriv,p=p,q=q,h=h,b=b,rho=rho,cluster=cluster.rd,
+                     kernel=kernel,bwselect=bwselect,vce=vce,nnmatch=nnmatch,scalepar=scalepar,scaleregul=scaleregul,
+                     sharpbw=sharpbw,fuzzy=fuzzy,level=level,weights=weights,subset=subset,
+                     masspoints=masspoints,bwcheck=bwcheck,bwrestrict=bwrestrict,stdvars=stdvars)
 
       h.aux <- aux$bws
       h.l <- h.aux[1,1]
@@ -305,7 +323,8 @@ rdmde <- function(data = NULL,
 
   cat('Calculating MDE...')
 
-  mde.aux <- rdpower.powerNR.mde(ntilde,tau0,se.rbc,qnorm(1-alpha/2),beta)
+  z <- qnorm(1-alpha/2)
+  mde.aux <- rdpower.powerNR.mde(ntilde,tau0,se.rbc,z,beta)
   mde <- mde.aux$mde
 
   beta.list <- numeric(4)
@@ -318,7 +337,7 @@ rdmde <- function(data = NULL,
     beta.list[count] <- baux
 
     if (baux<1){
-      rdpow.aux <- rdpower.powerNR.mde(ntilde,tau0,se.rbc,qnorm(1-alpha/2),baux)
+      rdpow.aux <- rdpower.powerNR.mde(ntilde,tau0,se.rbc,z,baux)
       mde.rbc.list[count] <- rdpow.aux$mde
 
     }
@@ -327,7 +346,7 @@ rdmde <- function(data = NULL,
   }
 
   if(all==TRUE){
-    mde.conv.aux <- rdpower.powerNR.mde(ntilde,tau0+bias,se.conv,qnorm(1-alpha/2),beta)
+    mde.conv.aux <- rdpower.powerNR.mde(ntilde,tau0+bias,se.conv,z,beta)
     mde.conv <- mde.conv.aux$mde
 
     mde.conv.list <- numeric(4)
@@ -337,7 +356,7 @@ rdmde <- function(data = NULL,
       baux <- beta*(1+r)
 
       if (baux<1){
-        rdpow.conv.aux <- rdpower.powerNR.mde(ntilde,tau0+bias,se.conv,qnorm(1-alpha/2),baux)
+        rdpow.conv.aux <- rdpower.powerNR.mde(ntilde,tau0+bias,se.conv,z,baux)
         mde.conv.list[count] <- rdpow.conv.aux$mde
 
       }

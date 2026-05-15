@@ -1,16 +1,16 @@
 ###################################################################
 # rdpower: power calculations for RD designs
 # Illustration file
-# !version 2.3 22-May-2025
-# Authors: Matias Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
+# !version 3.0 15-May-2026
+# Authors: Matias D. Cattaneo, Rocio Titiunik, Gonzalo Vazquez-Bare
 ###################################################################
 ## NOTE: if you are using rdrobust version 2020 or newer, the option
-## masspoints="off" and stdvars="on" may be needed in order to replicate the
+## masspoints="off" and stdvars=TRUE may be needed in order to replicate the
 ## results in the Stata journal article.
 ## For example, line 39:
 ##    aux = rdpower(data=Z,tau=5)
 ## should be replaced by:
-##    aux = rdpower(data=Z,tau=5,masspoints="off",stdvars="on")
+##    aux = rdpower(data=Z,tau=5,masspoints="off",stdvars=TRUE)
 ###################################################################
 
 #################################################################
@@ -53,7 +53,7 @@ aux <- rdpower(data=Z,tau=5,plot=TRUE)
 # rdpower with rdrobust options
 
 aux <- rdpower(data=Z,tau=5,h=c(16,18),b=c(18,20))
-aux <- rdpower(data=Z,tau=5,kernel='uniform',cluster=data$state,vce='hc0')
+aux <- rdpower(data=Z,tau=5,kernel='uniform',cluster=data$state,vce='cr1')
 aux <- rdpower(data=Z,tau=5,bwselect='certwo',vce='hc3',scaleregul=0,rho=1)
 
 # rdpower with conventional inference

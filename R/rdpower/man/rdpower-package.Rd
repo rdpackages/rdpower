@@ -25,9 +25,9 @@ Calonico, S., M. D. Cattaneo, and R. Titiunik. (2015).\href{https://rdpackages.g
 Cattaneo, M. D., R. Titiunik and G. Vazquez-Bare. (2019). \href{https://rdpackages.github.io/references/Cattaneo-Titiunik-VazquezBare_2019_Stata.pdf}{Power Calculations for Regression Discontinuity Designs}. \emph{Stata Journal}, 19(1): 210-245.
 }
 \author{
-Matias Cattaneo, Princeton University. \email{cattaneo@princeton.edu}
+Matias D. Cattaneo, Princeton University. \email{matias.d.cattaneo@gmail.com}
 
-Rocio Titiunik, Princeton University. \email{titiunik@princeton.edu}
+Rocio Titiunik, Princeton University. \email{rocio.titiunik@gmail.com}
 
-Gonzalo Vazquez-Bare, UC Santa Barbara. \email{gvazquez@econ.ucsb.edu}
+Gonzalo Vazquez-Bare, UC Santa Barbara. \email{gvazquezbare@gmail.com}
 }
