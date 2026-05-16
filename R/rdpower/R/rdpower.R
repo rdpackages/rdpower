@@ -28,7 +28,6 @@
 #' @param nsamples sets the total sample size to the left, sample size to the left inside the bandwidth, total sample size to the right and sample size to the right of the cutoff inside the bandwidth to calculate the variance when the running variable is not specified. When not specified, the values are calculated using the running variable.
 #' @param sampsi sets the sample size at each side of the cutoff for power calculation. The first number is the sample size to the left of the cutoff and the second number is the sample size to the right. Default values are the sample sizes inside the chosen bandwidth.
 #' @param samph sets the bandwidths at each side of the cutoff for power calculation. The first number is the bandwidth to the left of the cutoff and the second number is the bandwidth to the right.  Default values are the bandwidths used by \code{rdrobust}.
-#' @param all displays the power using the conventional variance estimator, in addition to the robust bias corrected one.
 #' @param bias set bias to the left and right of the cutoff. If not specified, the biases are estimated using \code{rdrobust}.
 #' @param variance set variance to the left and right of the cutoff. If not specified, the variances are estimated using \code{rdrobust}.
 #' @param plot plots the power function using the conventional and robust bias corrected standard errors from \code{rdrobust}.
@@ -98,7 +97,6 @@ rdpower <- function(data = NULL,
                    nsamples = NULL,
                    sampsi = NULL,
                    samph = NULL,
-                   all = FALSE,
                    bias = NULL,
                    variance = NULL,
                    plot = FALSE,
@@ -306,13 +304,8 @@ rdpower <- function(data = NULL,
   V.rbc <- Vl.rb/(ntilde*(hnew.l^(1+2*deriv))) + Vr.rb/(ntilde*(hnew.r^(1+2*deriv)))
   se.rbc <- sqrt(V.rbc)
 
-  if (all==TRUE){
-    V.conv <- Vl.cl/(ntilde*(hnew.l^(1+2*deriv))) + Vr.cl/(ntilde*(hnew.r^(1+2*deriv)))
-    se.conv <- sqrt(V.conv)
-  } else{
-    V.conv <- V.rbc
-    se.conv <- se.rbc
-  }
+  V.conv <- Vl.cl/(ntilde*(hnew.l^(1+2*deriv))) + Vr.cl/(ntilde*(hnew.r^(1+2*deriv)))
+  se.conv <- sqrt(V.conv)
 
   ## Bias adjustment
 
@@ -400,76 +393,6 @@ rdpower <- function(data = NULL,
   }
 
   #################################################################
-  # Output
-  #################################################################
-
-  cat('\n')
-  cat(paste0(format('Number of obs =', width=22), toString(N.disp))); cat("\n")
-  cat(paste0(format('BW type       =', width=22), bwselect)); cat("\n")
-  cat(paste0(format('Kernel type   =', width=22), kernel_type)); cat("\n")
-  cat(paste0(format('VCE method    =', width=22), vce_type)); cat("\n")
-  cat(paste0(format('Derivative    =', width=22), toString(deriv))); cat("\n")
-  cat(paste0(format('HA:       tau =', width=22), round(tau,3))); cat("\n")
-  if (all==TRUE){
-    cat(paste0(format('Size dist.    =', width=22), round(power.conv.list[4]-alpha,3))); cat("\n")
-  }
-
-  cat('\n\n')
-
-  cat(paste0(format(paste0("Cutoff c = ", toString(round(cutoff, 3))), width=22), format("Left of c", width=16), format("Right of c", width=16))); cat("\n")
-  cat(paste0(format("Number of obs",      width=22), format(toString(nminus.disp),     width=16), format(toString(nplus.disp),        width=16))); cat("\n")
-  cat(paste0(format("Eff. number of obs", width=22), format(toString(nhl.disp),        width=16), format(toString(nhr.disp),          width=16))); cat("\n")
-  cat(paste0(format("BW loc. poly.",      width=22), format(toString(round(hl,3)),     width=16), format(toString(round(hr,3)),       width=16))); cat("\n")
-  cat(paste0(format("Order loc. poly.",   width=22), format(toString(p),               width=16), format(toString(p),                 width=16))); cat("\n")
-
-  text_aux <- "New sample"
-  if (!is.null(cluster)){
-    cat(paste0(format("Number of clusters",    width=22), format(toString(gminus),     width=16), format(toString(gplus),             width=16))); cat("\n")
-    cat(paste0(format("Eff. num. of clusters", width=22), format(toString(gminus_h_l), width=16), format(toString(gplus_h_r),         width=16))); cat("\n")
-    text_aux<- "New cluster sample"
-  }
-
-
-  cat(paste0(format("Sampling BW",        width=22), format(toString(round(hnew.l,3)), width=16), format(toString(round(hnew.r,3)),   width=16))); cat("\n")
-  cat(paste0(format(text_aux,         width=22), format(toString(ntilde.l),        width=16), format(toString(ntilde.r),          width=16))); cat("\n")
-  cat("\n\n")
-
-  cat(paste0(rep('=',89),collapse='')); cat('\n')
-  cat(paste0(format('Power against:', width=25),
-             format('H0: tau = ',     width=15),
-             format('0.2*tau = ',     width=15),
-             format('0.5*tau = ',     width=15),
-             format('0.8*tau = ',     width=13),
-             format('tau = ',         width=15))); cat('\n')
-
-  cat(paste0(format('', width=25),
-             format(toString(round(0,3)),       width=15),
-             format(toString(round(0.2*tau,3)), width=15),
-             format(toString(round(0.5*tau,3)), width=15),
-             format(toString(round(0.8*tau,3)), width=13),
-             format(toString(round(tau,3)),     width=15))); cat('\n')
-  cat(paste0(rep('-',89),collapse='')); cat('\n')
-  cat(paste0(format('Robust bias-corrected', width=25),
-             format(toString(round(power.rbc.list[1],3)), width=15),
-             format(toString(round(power.rbc.list[2],3)), width=15),
-             format(toString(round(power.rbc.list[3],3)), width=15),
-             format(toString(round(power.rbc.list[4],3)), width=13),
-             format(toString(round(power.rbc,3)),         width=15)))
-
-  if (all==TRUE){
-    cat('\n')
-    cat(paste0(format('Conventional', width=25),
-               format(toString(round(power.conv.list[1],3)), width=15),
-               format(toString(round(power.conv.list[2],3)), width=15),
-               format(toString(round(power.conv.list[3],3)), width=15),
-               format(toString(round(power.conv.list[4],3)), width=13),
-               format(toString(round(power.conv,3)), width=15))); cat('\n')
-    cat(paste0(rep('=',89),collapse='')); cat('\n')
-
-  } else {cat('\n');cat(paste0(rep('=',89),collapse=''));cat('\n\n')}
-
-
-  #################################################################
   # Power function plot
   #################################################################
 
@@ -487,11 +410,9 @@ rdpower <- function(data = NULL,
     title('Power function')
     abline(v=0,lty=2,col='gray50')
     abline(h=alpha,lty=2,col='gray50')
-    if (all==TRUE){
-      plot(function(x) 1 - pnorm((x+bias)/se.conv+z) + pnorm((x+bias)/se.conv-z),
-            add=TRUE,lty=2)
-      legend('bottomleft',legend=c('robust bc','conventional'),lty=c(1,2),bty='n')
-    }
+    plot(function(x) 1 - pnorm((x+bias)/se.conv+z) + pnorm((x+bias)/se.conv-z),
+          add=TRUE,lty=2)
+    legend('bottomleft',legend=c('robust bc','conventional'),lty=c(1,2),bty='n')
   }
 
 
@@ -514,13 +435,38 @@ rdpower <- function(data = NULL,
                 bias.l = bias.l,
                 Vr.rb = Vr.rb,
                 Vl.rb = Vl.rb,
-                alpha = alpha)
+                alpha = alpha,
+                power.conv = power.conv,
+                se.conv = se.conv)
 
-  if (all==TRUE){
-    output <- c(output,
-               power.conv = power.conv,
-               se.conv = se.conv)
-  }
+  output$.display <- list(N.disp = N.disp,
+                          bwselect = bwselect,
+                          kernel_type = kernel_type,
+                          vce_type = vce_type,
+                          deriv = deriv,
+                          cutoff = cutoff,
+                          nminus.disp = nminus.disp,
+                          nplus.disp = nplus.disp,
+                          nhl.disp = nhl.disp,
+                          nhr.disp = nhr.disp,
+                          hl = hl,
+                          hr = hr,
+                          p = p,
+                          clustered = !is.null(cluster),
+                          gminus = if (!is.null(cluster)) gminus else NULL,
+                          gplus = if (!is.null(cluster)) gplus else NULL,
+                          gminus_h_l = if (!is.null(cluster)) gminus_h_l else NULL,
+                          gplus_h_r = if (!is.null(cluster)) gplus_h_r else NULL,
+                          text_aux = if (!is.null(cluster)) "New cluster sample" else "New sample",
+                          hnew.l = hnew.l,
+                          hnew.r = hnew.r,
+                          ntilde.l = ntilde.l,
+                          ntilde.r = ntilde.r,
+                          power.rbc.list = power.rbc.list,
+                          power.conv.list = power.conv.list,
+                          size.dist = power.conv.list[4] - alpha)
+  output$call <- match.call()
+  class(output) <- "rdpower"
 
   return(output)
 

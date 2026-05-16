@@ -58,7 +58,8 @@ aux <- rdpower(data=Z,tau=5,bwselect='certwo',vce='hc3',scaleregul=0,rho=1)
 
 # rdpower with conventional inference
 
-aux <- rdpower(data=Z,tau=5,all=TRUE)
+aux <- rdpower(data=Z,tau=5)
+summary(aux,all=TRUE)
 
 # rdpower with user-specified bias and variance
 
@@ -132,7 +133,8 @@ aux <- rdsampsi(data=Z,tau=5,beta=.9,samph=c(18,19),nratio=.5,plot=TRUE)
 
 # rdsampsi with conventional inference
 
-aux <- rdsampsi(data=Z,tau=5,all=TRUE)
+aux <- rdsampsi(data=Z,tau=5)
+summary(aux,all=TRUE)
 
 # rdsampsi vs rdpower
 

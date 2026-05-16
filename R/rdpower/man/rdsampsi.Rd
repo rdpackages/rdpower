@@ -12,7 +12,6 @@ rdsampsi(
   beta = 0.8,
   samph = NULL,
   nsamples = NULL,
-  all = FALSE,
   bias = NULL,
   variance = NULL,
   nratio = NULL,
@@ -60,8 +59,6 @@ rdsampsi(
 \item{samph}{sets the bandwidths at each side of the cutoff for power calculation. The first number is the bandwidth to the left of the cutoff and the second number is the bandwidth to the right.  Default values are the bandwidths used by \code{rdrobust}.}
 
 \item{nsamples}{sets the total sample size to the left, sample size to the left inside the bandwidth, total sample size to the right and sample size to the right of the cutoff inside the bandwidth to calculate the variance when the running variable is not specified. When not specified, the values are calculated using the running variable.}
-
-\item{all}{displays the power using the conventional variance estimator, in addition to the robust bias corrected one.}
 
 \item{bias}{set bias to the left and right of the cutoff. If not specified, the biases are estimated using \code{rdrobust}.}
 

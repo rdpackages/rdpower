@@ -28,7 +28,6 @@
 #' @param beta specifies the desired power. Default is 0.8.
 #' @param nsamples sets the total sample size to the left, sample size to the left inside the bandwidth, total sample size to the right and sample size to the right of the cutoff inside the bandwidth to calculate the variance when the running variable is not specified. When not specified, the values are calculated using the running variable.
 #' @param samph sets the bandwidths at each side of the cutoff for power calculation. The first number is the bandwidth to the left of the cutoff and the second number is the bandwidth to the right.  Default values are the bandwidths used by \code{rdrobust}.
-#' @param all displays the power using the conventional variance estimator, in addition to the robust bias corrected one.
 #' @param bias set bias to the left and right of the cutoff. If not specified, the biases are estimated using \code{rdrobust}.
 #' @param variance set variance to the left and right of the cutoff. If not specified, the variances are estimated using \code{rdrobust}.
 #' @param nratio specifies the proportion of treated units in the window. Default is the ratio of the standard deviation of the treated to the sum of the standard deviations for treated and controls.
@@ -101,7 +100,6 @@ rdsampsi <- function(data = NULL,
                     beta = 0.8,
                     samph = NULL,
                     nsamples = NULL,
-                    all = FALSE,
                     bias = NULL,
                     variance = NULL,
                     nratio = NULL,
@@ -304,17 +302,11 @@ rdsampsi <- function(data = NULL,
 
   # Find m
 
-  cat('Calculating sample size...')
-
   maux <- rdpower.powerNR(init.cond,tau,stilde,z,beta)
   m <- maux$m
 
-  if (all==TRUE){
-    maux1 <- rdpower.powerNR(init.cond,tau+bias,stilde.cl,z,beta)
-    m.cl <- maux1$m
-  }
-
-  cat('Sample size obtained.')
+  maux1 <- rdpower.powerNR(init.cond,tau+bias,stilde.cl,z,beta)
+  m.cl <- maux1$m
 
   # Adjust m to find sample sizes
 
@@ -347,12 +339,10 @@ rdsampsi <- function(data = NULL,
   Ml <- ceiling(M*(1-nratio))
   M <- Ml + Mr
 
-  if (all==TRUE){
-    M.cl <- m.cl/denom.cl
-    Mr.cl <- ceiling(M.cl*nratio.cl)
-    Ml.cl <- ceiling(M.cl*(1-nratio.cl))
-    M.cl <- Ml.cl + Mr.cl
-  }
+  M.cl <- m.cl/denom.cl
+  Mr.cl <- ceiling(M.cl*nratio.cl)
+  Ml.cl <- ceiling(M.cl*(1-nratio.cl))
+  M.cl <- Ml.cl + Mr.cl
 
   #################################################################
   # Descriptive statistics for display
@@ -425,83 +415,8 @@ rdsampsi <- function(data = NULL,
 
   # Size distortion
 
-  if (all==TRUE){
-    se_cl_aux <- stilde.cl / sqrt(m.cl)
-    size_dist <- 1 - pnorm(bias/se_cl_aux+z) + pnorm(bias/se_cl_aux-z)
-
-  }
-
-
-  #################################################################
-  # Output
-  #################################################################
-
-  cat('\n')
-  cat(paste0(format('Number of obs =', width=22), toString(N.disp))); cat("\n")
-  cat(paste0(format('BW type       =', width=22), bwselect)); cat("\n")
-  cat(paste0(format('Kernel type   =', width=22), kernel_type)); cat("\n")
-  cat(paste0(format('VCE method    =', width=22), vce_type)); cat("\n")
-  cat(paste0(format('Derivative    =', width=22), toString(deriv))); cat("\n")
-  cat(paste0(format('HA:       tau =', width=22), round(tau,3))); cat("\n")
-  cat(paste0(format('Power         =', width=22), round(beta,3))); cat("\n")
-  if (all==TRUE){
-    cat(paste0(format('Size dist.    =', width=22), round(size_dist,3))); cat("\n")
-  }
-  cat('\n\n')
-
-  cat(paste0(format(paste0("Cutoff c = ", toString(round(cutoff, 3))), width=22), format("Left of c", width=16), format("Right of c", width=16))); cat("\n")
-  cat(paste0(format("Number of obs",      width=22), format(toString(nminus.disp),     width=16), format(toString(nplus.disp),        width=16))); cat("\n")
-  cat(paste0(format("Eff. number of obs", width=22), format(toString(n.hnew.l.disp),   width=16), format(toString(n.hnew.r.disp),     width=16))); cat("\n")
-  cat(paste0(format("BW loc. poly.",      width=22), format(toString(round(hl,3)),     width=16), format(toString(round(hr,3)),       width=16))); cat("\n")
-  cat(paste0(format("Order loc. poly.",   width=22), format(toString(p),               width=16), format(toString(p),                 width=16))); cat("\n")
-  text_aux <- "New sample"
-  if (!is.null(cluster)){
-    cat(paste0(format("Number of clusters",    width=22), format(toString(gminus),     width=16), format(toString(gplus),             width=16))); cat("\n")
-    cat(paste0(format("Eff. num. of clusters", width=22), format(toString(gminus_h_l), width=16), format(toString(gplus_h_r),         width=16))); cat("\n")
-    text_aux<- "New cluster sample"
-  }
-  cat(paste0(format("Sampling BW",        width=22), format(toString(round(hnew.l,3)), width=16), format(toString(round(hnew.r,3)),   width=16))); cat("\n")
-  cat("\n\n")
-
-  cat(paste0(rep('=',89),collapse='')); cat('\n')
-  #cat(paste0(format('Chosen sample sizes',   width=33),
-  #           format('Sample size in window', width=35),
-  #           format('Proportion',            width=15))); cat('\n')
-
-  if (!is.null(cluster)){
-    cat(paste0(format('',   width=28),
-               format('Number of clusters in window', width=35),
-               format('Proportion',            width=15))); cat('\n')
-  }
-  else{
-    cat(paste0(format('',   width=33),
-               format('Number of obs in window', width=35),
-               format('Proportion',            width=15))); cat('\n')
-  }
-
-
-
-  cat(paste0(format('',        width=25),
-             format('[c-h,c)', width=15),
-             format('[c,c+h]', width=15),
-             format('Total',   width=15),
-             format('[c,c+h]', width=13))); cat('\n')
-  cat(paste0(rep('-',89),collapse='')); cat('\n')
-  cat(paste0(format('Robust bias-corrected', width=25),
-             format(toString(Ml), width=15),
-             format(toString(Mr), width=15),
-             format(toString(M), width=15),
-             format(toString(round(nratio,3)), width=13)))
-
-  if (all==TRUE){
-    cat('\n')
-    cat(paste0(format('Conventional', width=25),
-               format(toString(Ml.cl), width=15),
-               format(toString(Mr.cl), width=15),
-               format(toString(M.cl), width=15),
-               format(toString(round(nratio.cl,3)), width=13))); cat('\n')
-    cat(paste0(rep('=',89),collapse='')); cat('\n')
-  } else {cat('\n');cat(paste0(rep('=',89),collapse=''));cat('\n\n')}
+  se_cl_aux <- stilde.cl / sqrt(m.cl)
+  size_dist <- 1 - pnorm(bias/se_cl_aux+z) + pnorm(bias/se_cl_aux-z)
 
 
   #################################################################
@@ -525,11 +440,9 @@ rdsampsi <- function(data = NULL,
     title('Power function')
     abline(v=M,lty=2,col='gray50')
     abline(h=beta,lty=2,col='gray50')
-    if (all==TRUE){
-      plot(function(x) 1 - pnorm(sqrt(x*denom.cl)*(tau+bias)/stilde.cl+z) + pnorm(sqrt(x*denom.cl)*(tau+bias)/stilde.cl-z),
-            add=TRUE,lty=2)
-      legend('bottomleft',legend=c('robust bc','conventional'),lty=c(1,2),bty='n')
-    }
+    plot(function(x) 1 - pnorm(sqrt(x*denom.cl)*(tau+bias)/stilde.cl+z) + pnorm(sqrt(x*denom.cl)*(tau+bias)/stilde.cl-z),
+          add=TRUE,lty=2)
+    legend('bottomleft',legend=c('robust bc','conventional'),lty=c(1,2),bty='n')
   }
 
   #################################################################
@@ -554,16 +467,45 @@ rdsampsi <- function(data = NULL,
                 beta = beta,
                 alpha = alpha,
                 init.cond = init.cond,
-                no.iter = maux$iter)
-  if (all==TRUE){
-    output <- c(output,
-               sampsi.h.tot.cl = M.cl,
-               sampsi.h.r.cl = Mr.cl,
-               sampsi.h.l.cl = Ml.cl,
-               sampsi.tot.cl = m.cl,
-               var.r.cl = vr.cl,
-               var.l.cl = vl.cl)
-  }
+                no.iter = maux$iter,
+                sampsi.h.tot.cl = M.cl,
+                sampsi.h.r.cl = Mr.cl,
+                sampsi.h.l.cl = Ml.cl,
+                sampsi.tot.cl = m.cl,
+                var.r.cl = vr.cl,
+                var.l.cl = vl.cl)
+
+  output$.display <- list(N.disp = N.disp,
+                          bwselect = bwselect,
+                          kernel_type = kernel_type,
+                          vce_type = vce_type,
+                          deriv = deriv,
+                          cutoff = cutoff,
+                          nminus.disp = nminus.disp,
+                          nplus.disp = nplus.disp,
+                          n.hnew.l.disp = n.hnew.l.disp,
+                          n.hnew.r.disp = n.hnew.r.disp,
+                          hl = hl,
+                          hr = hr,
+                          p = p,
+                          clustered = !is.null(cluster),
+                          gminus = if (!is.null(cluster)) gminus else NULL,
+                          gplus = if (!is.null(cluster)) gplus else NULL,
+                          gminus_h_l = if (!is.null(cluster)) gminus_h_l else NULL,
+                          gplus_h_r = if (!is.null(cluster)) gplus_h_r else NULL,
+                          hnew.l = hnew.l,
+                          hnew.r = hnew.r,
+                          Ml = Ml,
+                          Mr = Mr,
+                          M = M,
+                          nratio = nratio,
+                          Ml.cl = Ml.cl,
+                          Mr.cl = Mr.cl,
+                          M.cl = M.cl,
+                          nratio.cl = nratio.cl,
+                          size.dist = size_dist)
+  output$call <- match.call()
+  class(output) <- "rdsampsi"
 
   return(output)
 

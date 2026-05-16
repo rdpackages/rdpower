@@ -12,7 +12,6 @@ rdmde(
   nsamples = NULL,
   sampsi = NULL,
   samph = NULL,
-  all = FALSE,
   bias = NULL,
   variance = NULL,
   init.cond = NULL,
@@ -57,8 +56,6 @@ rdmde(
 \item{sampsi}{sets the sample size at each side of the cutoff for power calculation. The first number is the sample size to the left of the cutoff and the second number is the sample size to the right. Default values are the sample sizes inside the chosen bandwidth.}
 
 \item{samph}{sets the bandwidths at each side of the cutoff for power calculation. The first number is the bandwidth to the left of the cutoff and the second number is the bandwidth to the right.  Default values are the bandwidths used by \code{rdrobust}.}
-
-\item{all}{displays the power using the conventional variance estimator, in addition to the robust bias corrected one.}
 
 \item{bias}{set bias to the left and right of the cutoff. If not specified, the biases are estimated using \code{rdrobust}.}
 
