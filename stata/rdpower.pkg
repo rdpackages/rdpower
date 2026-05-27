@@ -5,7 +5,9 @@ d Authors: Matias D. Cattaneo, Princeton University, matias.d.cattaneo@gmail.com
 d          Rocio Titiunik, Princeton University, rocio.titiunik@gmail.com
 d          Gonzalo Vazquez-Bare, UC Santa Barbara, gvazquezbare@gmail.com
 d
-d Distribution-Date: 20260515
+d Mata object code is distributed in one library file: lrdpower.mlib.
+d
+d Distribution-Date: 20260527
 d 
 f rdmde.ado
 f rdmde.sthlp
@@ -15,12 +17,7 @@ f rdpower.ado
 f rdpower.sthlp
 f rdsampsi.ado
 f rdsampsi.sthlp
-f rdpower_powerfun.mo
-f rdpower_powerfun_dot.mo
-f rdpower_powerfun_dot_tau.mo
-f rdpower_powerNR.mo
-f rdpower_powerNR_mde.mo
-f rdpower_functions.do
+f lrdpower.mlib
 f rdpower_illustration.do
 f rdpower_senate.dta
 

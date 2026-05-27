@@ -16,6 +16,19 @@ program define rdmde, rclass
 											 scalepar(real 1) scaleregul(real 1) fuzzy(string) level(real 95) ///
 											 masspoints(string) bwcheck(real 0) bwrestrict(string) stdvars(string) nochecks nowarnings detail vleverage]
 
+	if "$RDPOWER_MATA_LOADED" != "1" {
+		tempname rdpower_mlib_ok
+		capture quietly mata: mata mlib index
+		capture quietly mata: st_numscalar("`rdpower_mlib_ok'", rdpower_mlib_loaded())
+		if _rc {
+			local rdpower_mlib_rc = _rc
+			di as error "rdpower Mata library lrdpower.mlib was not found or could not be loaded"
+			di as error "reinstall rdpower or rebuild lrdpower.mlib from rdpower_functions.do"
+			exit `rdpower_mlib_rc'
+		}
+		global RDPOWER_MATA_LOADED 1
+	}
+
 											  
 	****************************************************************************
 	** Options, default values and error checking

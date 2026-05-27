@@ -7,6 +7,18 @@
 version 16.0
 
 ********************************************************************************
+*** Library load check
+
+capture mata: mata drop rdpower_mlib_loaded()
+mata:
+real scalar rdpower_mlib_loaded()
+{
+	return(1)
+}
+mata mosave rdpower_mlib_loaded(), replace
+end
+
+********************************************************************************
 *** Power function
 
 capture mata: mata drop rdpower_powerfun()
@@ -119,4 +131,12 @@ void rdpower_powerNR_mde(real scalar n,real scalar tau0,real scalar stilde,real 
 }
 mata mosave rdpower_powerNR_mde(), replace
 end
+
+********************************************************************************
+* Build the distribution Mata library. The individual .mo files above are kept
+* useful for development, but rdpower.pkg ships lrdpower.mlib.
+********************************************************************************
+mata: mata mlib create lrdpower, replace
+mata: mata mlib add lrdpower rdpower_mlib_loaded() rdpower_powerfun() rdpower_powerfun_dot() rdpower_powerfun_dot_tau() rdpower_powerNR() rdpower_powerNR_mde()
+mata: mata mlib index
 
