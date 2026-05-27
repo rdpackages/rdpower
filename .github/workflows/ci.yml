@@ -71,9 +71,15 @@ jobs:
         working-directory: Python/rdpower
         run: python -m pip install -e . --no-deps
 
-      - name: Run Python tests
+      - name: Run Python tests if present
         working-directory: Python/rdpower
-        run: python -m pytest
+        shell: bash
+        run: |
+          if compgen -G "tests/test*.py" > /dev/null; then
+            python -m pytest
+          else
+            echo "No published Python tests found; skipping pytest."
+          fi
 
       - name: Build Python package
         working-directory: Python/rdpower
