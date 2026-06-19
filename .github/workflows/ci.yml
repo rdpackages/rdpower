@@ -16,10 +16,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Check out latest rdrobust
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: rdpackages/rdrobust
           ref: main
@@ -47,10 +47,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Check out latest rdrobust
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: rdpackages/rdrobust
           ref: main
@@ -91,10 +91,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Check out latest rdrobust
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: rdpackages/rdrobust
           ref: main
